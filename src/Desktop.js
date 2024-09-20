@@ -210,14 +210,14 @@ const Desktop = () => {
                 id: file_name,
                 data: { label: file_name },
                 position: {
-                    x: Math.round(window.innerWidth / Object.keys(file_to_functions).length) * index,
+                    x: 500 * index,
                     y: 0
                 },
                 className: 'light',
                 style: {
                     backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                    width: Math.round(window.innerWidth / 2 / Object.keys(file_to_functions).length),
-                    height: (file_to_functions[file_name].size + 1) * 50,
+                    width: 400,
+                    height: (file_to_functions[file_name].size + 1) * 70,
                 }
             })
 
@@ -227,12 +227,12 @@ const Desktop = () => {
                     data: { label: function_name },
                     position: {
                         x: 25,
-                        y: (function_index + 1) * 50
+                        y: (function_index + 1) * 70
                     },
                     className: 'light',
                     parentId: file_name,
                     style: {
-                        width: Math.round(window.innerWidth / 2 / Object.keys(file_to_functions).length) - 50,
+                        width: 400 - 50,
                     }
                 })
             })
