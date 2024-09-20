@@ -228,6 +228,13 @@ export const initialState = {
         { id: 'e4a-4b2', source: '4a', target: '4b2', animated: true },
         { id: 'e4b1-4b2', source: '4b1', target: '4b2', animated: true },
     ],
+
+
+    file_definition: {},
+    import_definition: {},
+    function_definition: {},
+    file_to_functions: {},
+    rerenderGraph: false,
 }
 
 

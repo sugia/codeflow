@@ -2,7 +2,7 @@ import {
     useState,
     useEffect,
     useCallback,
-    useReducer,
+    useContext,
 } from 'react';
 
 import {
@@ -19,12 +19,8 @@ import {
 
 import {
     Context,
-    initialState,
 } from './store/Context'
 
-import {
-    reducer,
-} from './store/reducer'
 
 import {
     ReactFlow,
@@ -37,7 +33,8 @@ import {
 } from '@xyflow/react'
 
 import '@xyflow/react/dist/style.css'
-import './Desktop.css'
+
+import DesktopGraph from './DesktopGraph'
 
 const languageMap = {
     '.py': 'Python',
@@ -166,151 +163,84 @@ const updateFileToFunctions = (file_name, code, regex) => {
 
 
 const Desktop = () => {
-    const [state, dispatch] = useReducer(reducer, initialState)
-
-    const [nodes, setNodes, onNodesChange] = useNodesState([])
-    const [edges, setEdges, onEdgesChange] = useEdgesState([])
-
-    const onConnect = useCallback((connection) => {
-        setEdges((eds) => addEdge(connection, eds))
-    }, [])
-
+    const { state, dispatch } = useContext(Context)
 
     const test = (a, b, c, d, e, f, g) => {
         //
     }
 
-    // file_name: programming_language
     let file_definition = {}
-
     let import_definition = {}
-    // function_name: file_name, function_parameters
-    // function_start_row, function_start_column,
-    // function_end_row, function_end_column,
     let function_definition = {}
-
-
     let file_to_functions = {}
 
-
-
-    const updateNodes = () => {
-        const vec = []
-        /*
-        id: '2',
-        data: { label: 'Group A' },
-        position: { x: 100, y: 100 },
-        className: 'light',
-        style: { backgroundColor: 'rgba(255, 0, 0, 0.2)', width: 200, height: 200 },
-        */
-
-        Object.keys(file_to_functions).forEach((file_name, index) => {
-
-            vec.push({
-                id: file_name,
-                data: { label: file_name },
-                position: {
-                    x: 500 * index,
-                    y: 0
-                },
-                className: 'light',
-                style: {
-                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                    width: 400,
-                    height: (file_to_functions[file_name].size + 1) * 70,
-                }
-            })
-
-            Array.from(file_to_functions[file_name]).forEach((function_name, function_index) => {
-                vec.push({
-                    id: function_name,
-                    data: { label: function_name },
-                    position: {
-                        x: 25,
-                        y: (function_index + 1) * 70
-                    },
-                    className: 'light',
-                    parentId: file_name,
-                    style: {
-                        width: 400 - 50,
-                    }
-                })
-            })
-        })
-
-        console.log(vec)
-        setNodes(vec)
-    }
+    let renderGraph = undefined
 
     return (
         <>
-            <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
-                <Upload.Dragger directory={true} multiple={true} showUploadList={false} onChange={(info) => {
-                    // console.log(info.file.originFileObj)
-                    const file = info.file.originFileObj
+            {
+                Object.keys(state.file_to_functions).length === 0 ?
+                    <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
+                        <Upload.Dragger directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                            // console.log(info.file.originFileObj)
 
+                            if (renderGraph) {
+                                clearTimeout(renderGraph)
+                            }
 
+                            const file = info.file.originFileObj
 
-                    // console.log(file.name)
-                    const reader = new FileReader()
+                            // console.log(file.name)
+                            const reader = new FileReader()
 
-                    reader.onload = (e) => {
+                            reader.onload = (e) => {
+                                file_definition = {
+                                    ...file_definition,
+                                    ...{ [file.name]: detectLanguageByExtension(file.name) },
+                                }
+                                import_definition = {
+                                    ...import_definition,
+                                    ...extractImportElements(file.name, e.target.result),
+                                }
+                                function_definition = {
+                                    ...function_definition,
+                                    ...extractAllFunctions(file.name, e.target.result, combinedFunctionRegex),
+                                }
+                                file_to_functions = {
+                                    ...file_to_functions,
+                                    ...updateFileToFunctions(file.name, e.target.result, combinedFunctionRegex),
+                                }
+                                renderGraph = setTimeout(() => {
+                                    dispatch({
+                                        'value': {
+                                            'file_definition': file_definition,
+                                            'import_definition': import_definition,
+                                            'function_definition': function_definition,
+                                            'file_to_functions': file_to_functions,
+                                            'rerenderGraph': true,
+                                        }
+                                    })
+                                }, 500)
 
-                        file_definition[file.name] = detectLanguageByExtension(file.name)
+                            }
 
-                        // console.log(file.name)
+                            reader.readAsText(file)
+                        }}>
+                            <div style={{ 'width': '400px' }}>
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag folder to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                    Easily upload your code directory by clicking to select folders from your device or dragging a folder and dropping into the box here.
+                                </p>
+                            </div>
+                        </Upload.Dragger>
+                    </Row>
+                    :
+                    <DesktopGraph />
+            }
 
-                        import_definition = {
-                            ...import_definition,
-                            ...extractImportElements(file.name, e.target.result),
-                        }
-
-                        function_definition = {
-                            ...function_definition,
-                            ...extractAllFunctions(file.name, e.target.result, combinedFunctionRegex),
-                        }
-
-                        file_to_functions = {
-                            ...file_to_functions,
-                            ...updateFileToFunctions(file.name, e.target.result, combinedFunctionRegex),
-                        }
-                        //console.log('file_definition', file_definition)
-                        //console.log('import_definition', import_definition)
-                        //console.log('function_definition', function_definition)
-                        //console.log('file_to_functions', file_to_functions)
-
-                        setTimeout(() => {
-                            updateNodes()
-                        }, 500)
-
-                    }
-
-                    reader.readAsText(file)
-                }}>
-                    <div style={{ 'width': '400px' }}>
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">Click or drag folder or file to this area to upload</p>
-                        <p className="ant-upload-hint">
-                            Easily upload your PDF by clicking to select files from your device or dragging a PDF file and dropping into the box here.
-                        </p>
-                    </div>
-                </Upload.Dragger>
-            </Row>
-
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                fitView
-            >
-                <MiniMap />
-                <Controls />
-                <Background />
-            </ReactFlow>
         </>
     );
 };
