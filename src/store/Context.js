@@ -32,6 +32,12 @@ import realkit_filled from '../images/realkit_logo.webp'
 import codeviz_banner from '../images/codeviz_banner.png'
 import codeviz_logo from '../images/codeviz_logo_512.png'
 
+
+import codeflow_one from '../images/codeflow_one.webp'
+import codeflow_two from '../images/codeflow_two.webp'
+import codeflow_three from '../images/codeflow_three.webp'
+import codeflow_four from '../images/codeflow_four.webp'
+
 export const initialState = {
     // when in dev, change appURL to local url
     // appURL: 'http://localhost:3000',  
@@ -56,22 +62,22 @@ export const initialState = {
         {
             'title': `Multi-Language Support`,
             'text': `CodeFlow supports a wide range of programming languages. CodeFlow is built to scale for projects of any size, across any technology stack.`,
-            'image': opensign_one,
+            'image': codeflow_one,
         },
         {
             'title': `Instant Code Insights`,
             'text': `Need a quick sense of how a project is structured? CodeFlow gives you an immediate understanding of a code base, including function dependencies, class hierarchies, and important code segments. No matter the complexity, CodeFlow parses through the project, delivering key insights that make it easier to onboard, collaborate, and debug.`,
-            'image': opensign_two,
+            'image': codeflow_two,
         },
         {
             'title': `Open-Source and Customizable`,
             'text': `As an open-source platform, CodeFlow is highly customizable. Developers can contribute, extend features, or adapt the platform to their unique project needs. Whether you’re working on an enterprise-scale project or an open-source library, CodeFlow allows you to modify and tailor it for your use case.`,
-            'image': opensign_three,
+            'image': codeflow_three,
         },
         {
             'title': `Cross-Platform Integration`,
             'text': `CodeFlow integrates smoothly with popular version control systems like Git, and it works across platforms. No matter if you’re working on Linux, macOS, or Windows, CodeFlow can be adapted to analyze your code base and provide feedback directly within your development environment.`,
-            'image': opensign_four,
+            'image': codeflow_four,
         },
     ],
 
