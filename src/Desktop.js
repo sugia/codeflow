@@ -93,6 +93,10 @@ const extractImportElements = (file_name, code) => {
             matches[match.groups.namespace] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module }
         }
 
+        if (match.groups.default) {
+            matches[match.groups.default] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module}
+        }
+
         if (match.groups.named) {
             match.groups.named.split(',').map(i => i.trim()).filter(Boolean).forEach((item) => {
                 matches[item] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module }
@@ -176,6 +180,7 @@ const Desktop = () => {
 
     let renderGraph = undefined
 
+    
     return (
         <>
             {

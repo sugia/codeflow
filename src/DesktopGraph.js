@@ -57,6 +57,8 @@ function DesktopGraph() {
         */
         let h = 0
         let w = 0
+
+        const nodeIdSet = new Set([])
         Object.keys(state.file_to_functions).forEach((file_name, index) => {
             if (window.innerHeight < h + (state.file_to_functions[file_name].size + 1) * 100) {
                 h = 0
@@ -77,10 +79,11 @@ function DesktopGraph() {
                 }
             })
             h += (state.file_to_functions[file_name].size + 1) * 100
+            nodeIdSet.add(file_name)
 
             Array.from(state.file_to_functions[file_name]).forEach((function_name, function_index) => {
                 vec.push({
-                    id: function_name,
+                    id: function_name.slice(0, function_name.lastIndexOf('(')),
                     data: { label: function_name },
                     position: {
                         x: 25,
@@ -92,11 +95,25 @@ function DesktopGraph() {
                         width: 400 - 50,
                     }
                 })
+                nodeIdSet.add(function_name.slice(0, function_name.lastIndexOf('(')))
             })
         })
 
+        // { id: 'e1-2', source: '1', target: '2', animated: true },
+        const tmp = []
+        Object.keys(state.import_definition).forEach((function_name, index) => {
+            if (nodeIdSet.has(function_name)) {
+                tmp.push({ 
+                    id: `${function_name}-${state.import_definition[function_name]['function_called_in']}`,
+                    source: function_name,
+                    target: state.import_definition[function_name]['function_called_in'],
+                    animated: true,
+                })
+            }
+        })
         // console.log(vec)
         setNodes(vec)
+        setEdges(tmp)
     }
 
     useEffect(() => {
