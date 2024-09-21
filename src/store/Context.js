@@ -76,7 +76,7 @@ export const initialState = {
     ],
 
     endorsementTitle: `Trusted by Innovative Startups`,
-    endorsementText: `CodeFlow powers PDF signatures within AmpliChat, DreamHub, VoiceQnA, VoiceMirror, BaZiPaiPai, SpindriftHome, MailGPT, Jomimi, Paper, RealKit`,
+    endorsementText: `CodeFlow powers infrastructure within AmpliChat, DreamHub, VoiceQnA, VoiceMirror, BaZiPaiPai, SpindriftHome, MailGPT, Jomimi, Paper, RealKit`,
     endorsementList: [
         {
             title: `AmpliChat: Event Chat App`,

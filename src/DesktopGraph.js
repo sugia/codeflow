@@ -263,80 +263,79 @@ const DesktopGraph = () => {
 
     // console.log(function_links)
     return (
-        <Layout style={{ 'minWidth': '1000px' }}>
+        <>
             <DesktopHeader />
 
-            <Layout.Content>
-                {
-                    Object.keys(state.file_to_functions).length === 0 ?
-                        <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
-                            <Upload.Dragger directory={true} multiple={true} showUploadList={false} onChange={(info) => {
-                                // console.log(info.file.originFileObj)
+            {
+                Object.keys(state.file_to_functions).length === 0 ?
+                    <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
+                        <Upload.Dragger directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                            // console.log(info.file.originFileObj)
 
-                                if (renderGraph) {
-                                    clearTimeout(renderGraph)
+                            if (renderGraph) {
+                                clearTimeout(renderGraph)
+                            }
+
+                            const file = info.file.originFileObj
+
+                            // console.log(file.name)
+                            const reader = new FileReader()
+
+                            reader.onload = (e) => {
+                                file_definition = {
+                                    ...file_definition,
+                                    ...{ [file.name]: detectLanguageByExtension(file.name) },
+                                }
+                                import_definition = {
+                                    ...import_definition,
+                                    ...extractImportElements(file.name, e.target.result),
+                                }
+                                function_definition = {
+                                    ...function_definition,
+                                    ...extractAllFunctions(file.name, e.target.result, combinedFunctionRegex),
+                                }
+                                file_to_functions = {
+                                    ...file_to_functions,
+                                    ...updateFileToFunctions(file.name, e.target.result, combinedFunctionRegex),
                                 }
 
-                                const file = info.file.originFileObj
+                                function_links = [
+                                    ...function_links,
+                                    ...extractFunctionLinks(e.target.result),
+                                ]
+                                renderGraph = setTimeout(() => {
+                                    dispatch({
+                                        'value': {
+                                            'file_definition': file_definition,
+                                            'import_definition': import_definition,
+                                            'function_definition': function_definition,
+                                            'file_to_functions': file_to_functions,
+                                            'function_links': function_links,
+                                            'rerenderGraph': true,
+                                        }
+                                    })
+                                }, 500)
 
-                                // console.log(file.name)
-                                const reader = new FileReader()
+                            }
 
-                                reader.onload = (e) => {
-                                    file_definition = {
-                                        ...file_definition,
-                                        ...{ [file.name]: detectLanguageByExtension(file.name) },
-                                    }
-                                    import_definition = {
-                                        ...import_definition,
-                                        ...extractImportElements(file.name, e.target.result),
-                                    }
-                                    function_definition = {
-                                        ...function_definition,
-                                        ...extractAllFunctions(file.name, e.target.result, combinedFunctionRegex),
-                                    }
-                                    file_to_functions = {
-                                        ...file_to_functions,
-                                        ...updateFileToFunctions(file.name, e.target.result, combinedFunctionRegex),
-                                    }
+                            reader.readAsText(file)
+                        }}>
+                            <div style={{ 'width': '400px' }}>
+                                <p className="ant-upload-drag-icon">
+                                    <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag folder to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                    Easily upload your code directory by clicking to select folders from your device or dragging a folder and dropping into the box here.
+                                </p>
+                            </div>
+                        </Upload.Dragger>
+                    </Row>
+                    :
+                    <DesktopGraphFlow />
+            }
 
-                                    function_links = [
-                                        ...function_links,
-                                        ...extractFunctionLinks(e.target.result),
-                                    ]
-                                    renderGraph = setTimeout(() => {
-                                        dispatch({
-                                            'value': {
-                                                'file_definition': file_definition,
-                                                'import_definition': import_definition,
-                                                'function_definition': function_definition,
-                                                'file_to_functions': file_to_functions,
-                                                'function_links': function_links,
-                                                'rerenderGraph': true,
-                                            }
-                                        })
-                                    }, 500)
-
-                                }
-
-                                reader.readAsText(file)
-                            }}>
-                                <div style={{ 'width': '400px' }}>
-                                    <p className="ant-upload-drag-icon">
-                                        <InboxOutlined />
-                                    </p>
-                                    <p className="ant-upload-text">Click or drag folder to this area to upload</p>
-                                    <p className="ant-upload-hint">
-                                        Easily upload your code directory by clicking to select folders from your device or dragging a folder and dropping into the box here.
-                                    </p>
-                                </div>
-                            </Upload.Dragger>
-                        </Row>
-                        :
-                        <DesktopGraphFlow />
-                }
-            </Layout.Content>
-        </Layout>
+        </>
     );
 };
 
