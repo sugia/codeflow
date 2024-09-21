@@ -101,12 +101,29 @@ function DesktopGraph() {
 
         // { id: 'e1-2', source: '1', target: '2', animated: true },
         const tmp = []
+        
         Object.keys(state.import_definition).forEach((function_name, index) => {
             if (nodeIdSet.has(function_name)) {
-                tmp.push({ 
+                tmp.push({
                     id: `${function_name}-${state.import_definition[function_name]['function_called_in']}`,
                     source: function_name,
                     target: state.import_definition[function_name]['function_called_in'],
+                    animated: false,
+                })
+            }
+        })
+        
+        
+        // console.log(state.function_links)
+        // console.log(nodeIdSet)
+        state.function_links.forEach((item) => {
+            // console.log(item)
+            if (nodeIdSet.has(item['source']) && nodeIdSet.has(item['target'])) {
+                
+                tmp.push({
+                    id: `${item['source']}-${item['target']}-link`,
+                    source: item['source'],
+                    target: item['target'],
                     animated: true,
                 })
             }

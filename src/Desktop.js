@@ -94,7 +94,7 @@ const extractImportElements = (file_name, code) => {
         }
 
         if (match.groups.default) {
-            matches[match.groups.default] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module}
+            matches[match.groups.default] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module }
         }
 
         if (match.groups.named) {
@@ -107,6 +107,83 @@ const extractImportElements = (file_name, code) => {
     return matches;
 }
 
+
+const getFunctionsDefined = (code) => {
+    const matches = []
+    let match
+
+    const regex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g;
+
+    while ((match = regex.exec(code)) !== null) {
+        if (match[2]) {
+            // Function Declaration
+            matches.push(match[2])
+        } else if (match[5]) {
+            // Function Expression
+            matches.push(match[5])
+        } else if (match[8]) {
+            // Arrow Function
+            matches.push(match[8])
+        }
+    }
+
+    return matches
+}
+
+const getFunctionsImported = (code) => {
+    const regex = /import\s+(?:(?<default>\w+)\s*,?\s*)?(?:\{(?<named>[\w\s,]*)\}\s*,?\s*)?(?:\*\s+as\s+(?<namespace>\w+)\s*,?\s*)?from\s+['"`](?<module>.+?)['"`];?/g
+
+    const matches = []
+    let match
+
+    // function_name: 
+    while ((match = regex.exec(code)) !== null) {
+        if (match.groups.namespace) {
+            matches.push(match.groups.namespace)
+        }
+
+        if (match.groups.default) {
+            matches.push(match.groups.default)
+        }
+
+        if (match.groups.named) {
+
+            match.groups.named.split(',').map(i => i.trim()).filter(Boolean).forEach((item) => {
+                matches.push(item)
+            })
+        }
+    }
+
+    return matches
+}
+
+const extractFunctionLinks = (code) => {
+    const functionRegex = /function\s+(\w+)\s*\([^)]*\)\s*\{[\s\S]*?\}|\w+\s*=\s*\(([^)]*)\)\s*=>\s*\{[\s\S]*?\}|const\s+(\w+)\s*=\s*function\s*\([^)]*\)\s*\{[\s\S]*?\}/g
+
+    const functionLinks = []
+    let match
+
+    const functions_defined = getFunctionsDefined(code)
+    const functions_imported = getFunctionsImported(code)
+
+    while ((match = functionRegex.exec(code)) !== null) {
+        [...functions_defined, ...functions_imported].forEach((f) => {
+            if (match[0].includes(f)) {
+                const endIndex = match.index + match[0].length
+                const functionName = match[1] || match[3] || code.slice(match.index, endIndex).match(/\w+(?=\s*=\s*function)/)?.[0]
+                if (functionName && functionName != f) {
+                    functionLinks.push({
+                        'source': f,
+                        'target': functionName,
+                    })
+                }
+            }
+        })
+    }
+
+    // console.log('functionLinks', functionLinks)
+    return functionLinks
+}
 
 // Combine the regex for function declarations, function expressions, and arrow functions
 const combinedFunctionRegex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g;
@@ -177,10 +254,11 @@ const Desktop = () => {
     let import_definition = {}
     let function_definition = {}
     let file_to_functions = {}
-
+    let function_links = []
     let renderGraph = undefined
 
-    
+
+    // console.log(function_links)
     return (
         <>
             {
@@ -215,6 +293,11 @@ const Desktop = () => {
                                     ...file_to_functions,
                                     ...updateFileToFunctions(file.name, e.target.result, combinedFunctionRegex),
                                 }
+
+                                function_links = [
+                                    ...function_links,
+                                    ...extractFunctionLinks(e.target.result),
+                                ]
                                 renderGraph = setTimeout(() => {
                                     dispatch({
                                         'value': {
@@ -222,6 +305,7 @@ const Desktop = () => {
                                             'import_definition': import_definition,
                                             'function_definition': function_definition,
                                             'file_to_functions': file_to_functions,
+                                            'function_links': function_links,
                                             'rerenderGraph': true,
                                         }
                                     })

@@ -234,6 +234,7 @@ export const initialState = {
     import_definition: {},
     function_definition: {},
     file_to_functions: {},
+    function_links: [],
     rerenderGraph: false,
 }
 
