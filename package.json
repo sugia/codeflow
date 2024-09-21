@@ -1,5 +1,5 @@
 {
-  "name": "codeviz",
+  "name": "codeflow",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "REACT_APP_URI=http://localhost:3000 react-scripts start",
-    "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false REACT_APP_URI=https://codeviz.jomimi.com react-scripts build",
+    "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false REACT_APP_URI=https://codeflow.jomimi.com react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
