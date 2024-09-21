@@ -2,7 +2,10 @@ import './App.css'
 
 import { BrowserRouter, useRoutes } from 'react-router-dom'
 
-import Desktop from './Desktop'
+import DesktopLanding from './DesktopLanding'
+import MobileLanding from './MobileLanding'
+
+import DesktopGraph from './DesktopGraph'
 
 
 import {
@@ -20,14 +23,15 @@ import {
 
 function RouteElementsDesktop() {
   const routeElements = useRoutes([
-    { path: '/', element: <Desktop /> },
+    { path: '/', element: <DesktopLanding /> },
+    { path: '/graph', element: <DesktopGraph /> },
   ]);
   return routeElements
 }
 
 function RouteElementsMobile() {
   const routeElements = useRoutes([
-    { path: '/', element: <Desktop /> },
+    { path: '/', element: <MobileLanding /> },
   ]);
   return routeElements
 }

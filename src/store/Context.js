@@ -29,6 +29,9 @@ import mailgpt_filled from '../images/mailgpt_logo_512.webp'
 import paper_filled from '../images/paper_bird_512_filled.png'
 import realkit_filled from '../images/realkit_logo.webp'
 
+import codeviz_banner from '../images/codeviz_banner.png'
+import codeviz_logo from '../images/codeviz_logo_512.png'
+
 export const initialState = {
     // when in dev, change appURL to local url
     // appURL: 'http://localhost:3000',  
@@ -37,11 +40,11 @@ export const initialState = {
 
     appURL: process.env.REACT_APP_URI,
 
-    appLogo: opensign_logo,
-    appName: 'OpenSign',
-    coverTitle: 'The Open-Source Solution for Digital Signatures',
-    coverText: 'OpenSign is a powerful, open-source platform that delivers a seamless and secure solution for digital signatures. Built to give businesses, organizations, and individuals complete control over their document signing processes, OpenSign offers customizable workflows, robust data privacy, and easy integration with your existing systems—all at no cost. Empower your digital document management with OpenSign, and join the open-source movement today.',
-    coverImage: opensign_banner,
+    appLogo: codeviz_logo,
+    appName: 'CodeFlow',
+    coverTitle: 'Instant Code Base Insights for Any Language',
+    coverText: 'CodeFlow is an open-source platform designed to help developers, teams, and organizations quickly grasp any code base. Whether you are working with Python, C++, Java, JavaScript, or even more specialized languages like Rust, Swift, or Kotlin, CodeFlow provides an instant overview of code structures, dependencies, and key insights. No more time wasted trying to understand unfamiliar code—get a brief and concise understanding in seconds.',
+    coverImage: codeviz_banner,
 
     discordImage: discordImage,
     discordLink: 'https://discord.gg/AwRv3QZuKP',
@@ -51,39 +54,29 @@ export const initialState = {
 
     sectionList: [
         {
-            'title': `Seamless & Secure Digital Signatures`,
-            'text': `OpenSign provides a powerful, open-source solution for your digital signature needs. From secure signing to robust data privacy, we offer the peace of mind you need for handling critical documents, all at no cost.`,
+            'title': `Multi-Language Support`,
+            'text': `CodeFlow supports a wide range of programming languages. CodeFlow is built to scale for projects of any size, across any technology stack.`,
             'image': opensign_one,
         },
         {
-            'title': `Take Control of Your Document Workflows`,
-            'text': `With OpenSign, you’re in the driver’s seat. Customize your workflows, automate signature collection, and tailor the platform to meet your specific needs. OpenSign adapts to you, not the other way around.`,
+            'title': `Instant Code Insights`,
+            'text': `Need a quick sense of how a project is structured? CodeFlow gives you an immediate understanding of a code base, including function dependencies, class hierarchies, and important code segments. No matter the complexity, CodeFlow parses through the project, delivering key insights that make it easier to onboard, collaborate, and debug.`,
             'image': opensign_two,
         },
         {
-            'title': `Open-Source, Zero Cost`,
-            'text': `Say goodbye to expensive licensing fees. OpenSign is a completely free, open-source platform that empowers businesses, organizations, and individuals to manage their digital documents without the hefty price tag.`,
+            'title': `Open-Source and Customizable`,
+            'text': `As an open-source platform, CodeFlow is highly customizable. Developers can contribute, extend features, or adapt the platform to their unique project needs. Whether you’re working on an enterprise-scale project or an open-source library, CodeFlow allows you to modify and tailor it for your use case.`,
             'image': opensign_three,
         },
         {
-            'title': `Easy Integration with Existing Systems`,
-            'text': `Whether you're working with CRMs, project management software, or other business tools, OpenSign integrates smoothly into your existing systems. Get started quickly and easily without disrupting your workflows.`,
+            'title': `Cross-Platform Integration`,
+            'text': `CodeFlow integrates smoothly with popular version control systems like Git, and it works across platforms. No matter if you’re working on Linux, macOS, or Windows, CodeFlow can be adapted to analyze your code base and provide feedback directly within your development environment.`,
             'image': opensign_four,
-        },
-        {
-            'title': `Committed to Data Privacy`,
-            'text': `Your privacy matters. OpenSign is built with data protection in mind, ensuring that your documents and signatures are securely handled every step of the way. Maintain full control over your sensitive information.`,
-            'image': opensign_five,
-        },
-        {
-            'title': `Join the Open-Source Movement`,
-            'text': `Empower your digital signature processes while supporting the open-source community. OpenSign’s collaborative and transparent approach ensures constant improvements and innovation, driven by its user base.`,
-            'image': opensign_six,
         },
     ],
 
     endorsementTitle: `Trusted by Innovative Startups`,
-    endorsementText: `OpenSign powers PDF signatures within AmpliChat, DreamHub, VoiceQnA, VoiceMirror, BaZiPaiPai, SpindriftHome, MailGPT, Jomimi, Paper, RealKit`,
+    endorsementText: `CodeFlow powers PDF signatures within AmpliChat, DreamHub, VoiceQnA, VoiceMirror, BaZiPaiPai, SpindriftHome, MailGPT, Jomimi, Paper, RealKit`,
     endorsementList: [
         {
             title: `AmpliChat: Event Chat App`,
