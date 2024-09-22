@@ -62,24 +62,15 @@ const DesktopGraph = () => {
         //
     }
 
-    let file_definition = {}
-    let import_definition = {}
-    let function_definition = {}
-    let file_to_functions = {}
-    let function_links = []
-    let renderGraph = undefined
+
+    const [importDefinition, setImportDefinition] = useState({})
+    const [functionDefinition, setFunctionDefinition] = useState({})
+    const [fileToFunctions, setFileToFunctions] = useState({})
+    const [functionLinks, setFunctionLinks] = useState([])
 
 
     const loadFolder = (info) => {
-        if (renderGraph) {
-            clearTimeout(renderGraph)
 
-            dispatch({
-                'value': {
-                    'status': 'loading',
-                }
-            })
-        }
 
         const file = info.file.originFileObj
 
@@ -92,35 +83,51 @@ const DesktopGraph = () => {
             }
 
 
-            import_definition = {
-                ...import_definition,
-                ...languageMap[fileExtension].getImportDefinition(file.name, e.target.result),
-            }
-            function_definition = {
-                ...function_definition,
-                ...languageMap[fileExtension].getFunctionDefinition(file.name, e.target.result),
-            }
-            file_to_functions = {
-                ...file_to_functions,
-                ...languageMap[fileExtension].getFileToFunctions(file.name, e.target.result),
-            }
-            function_links = [
-                ...function_links,
-                ...languageMap[fileExtension].getFunctionLinks(e.target.result),
-            ]
-            renderGraph = setTimeout(() => {
-                dispatch({
-                    'value': {
-                        'file_definition': file_definition,
-                        'import_definition': import_definition,
-                        'function_definition': function_definition,
-                        'file_to_functions': file_to_functions,
-                        'function_links': function_links,
-                        'rerenderGraph': true,
-                        'status': 'completed',
+            setImportDefinition(
+                tmp => {
+                    return {
+                        ...tmp,
+                        ...languageMap[fileExtension].getImportDefinition(file.name, e.target.result),
                     }
-                })
-            }, 500)
+                }
+            )
+            
+            setFunctionDefinition(
+                tmp => {
+                    return {
+                        ...tmp,
+                        ...languageMap[fileExtension].getFunctionDefinition(file.name, e.target.result),
+                    }
+                }
+            )
+            setFileToFunctions(
+                tmp => {
+                    return {
+                        ...tmp,
+                        ...languageMap[fileExtension].getFileToFunctions(file.name, e.target.result),
+                    }
+                }
+            )
+            setFunctionLinks(
+                tmp => {
+                    return [
+                        ...tmp,
+                        ...languageMap[fileExtension].getFunctionLinks(e.target.result),
+                    ]
+                }
+            )
+            
+
+            dispatch({
+                'value': {
+                    'import_definition': importDefinition,
+                    'function_definition': functionDefinition,
+                    'file_to_functions': fileToFunctions,
+                    'function_links': functionLinks,
+                    'rerenderGraph': true,
+                }
+            })
+
             
         }
 
@@ -154,11 +161,11 @@ const DesktopGraph = () => {
                                             }}>
                                                 <Button style={{ 'marginTop': '25px' }} shape='round'
                                                     onClick={() => {
-                                                        file_definition = {}
-                                                        import_definition = {}
-                                                        function_definition = {}
-                                                        file_to_functions = {}
-                                                        function_links = []
+
+                                                        setImportDefinition({})
+                                                        setFunctionDefinition({})
+                                                        setFileToFunctions({})
+                                                        setFunctionLinks([])
                                                     }}
                                                     icon={
                                                         <FolderOpenOutlined style={{ 'color': 'gray' }} />
@@ -196,10 +203,7 @@ const DesktopGraph = () => {
                         </Upload.Dragger>
                     </Row>
                     :
-                    state.status === 'loading' ?
-                        <></>
-                        :
-                        <DesktopGraphFlow />
+                    <DesktopGraphFlow />
             }
 
         </>
