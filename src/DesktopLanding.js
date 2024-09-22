@@ -67,7 +67,7 @@ function DesktopLanding() {
                                 <Button type='primary' size='large' shape='round' icon={<GithubOutlined />}
                                     style={{ 'margin': '0px 10px', 'color': 'white', 'backgroundColor': 'black', 'width': '150px' }}
                                     onClick={() => {
-                                        window.open('https://github.com/sugia/cdoeflow', '_blank')
+                                        window.open('https://github.com/sugia/codeflow', '_blank')
                                     }}>
                                     <Typography.Title level={5} style={{ 'color': 'white', 'marginTop': '7px' }}>
                                         Github
