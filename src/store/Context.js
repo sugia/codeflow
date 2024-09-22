@@ -147,7 +147,7 @@ export const initialState = {
     ],
 
 
-
+    /*
     initialNodes: [
         {
             id: '1',
@@ -227,7 +227,7 @@ export const initialState = {
         { id: 'e4a-4b2', source: '4a', target: '4b2', animated: true },
         { id: 'e4b1-4b2', source: '4b1', target: '4b2', animated: true },
     ],
-
+    */
 
     file_definition: {},
     import_definition: {},
@@ -235,6 +235,7 @@ export const initialState = {
     file_to_functions: {},
     function_links: [],
     rerenderGraph: false,
+    status: 'completed', // loading, completed
 }
 
 

@@ -46,7 +46,7 @@ function DesktopGraph() {
     }, [])
 
 
-    const updateNodes = () => {
+    const updateGraph = () => {
         const vec = []
         /*
         id: '2',
@@ -60,87 +60,102 @@ function DesktopGraph() {
 
         const nodeIdSet = new Set([])
         Object.keys(state.file_to_functions).forEach((file_name, index) => {
-            if (window.innerHeight < h + (state.file_to_functions[file_name].size + 1) * 100) {
-                h = 0
-                w += 1
-            }
-            vec.push({
-                id: file_name,
-                data: { label: file_name },
-                position: {
-                    x: 500 * w,
-                    y: h,
-                },
-                className: 'light',
-                style: {
-                    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-                    width: 400,
-                    height: (state.file_to_functions[file_name].size + 1) * 70,
+            if (!nodeIdSet.has(file_name)) {
+                if (window.innerHeight < h + (state.file_to_functions[file_name].size + 1) * 100) {
+                    h = 0
+                    w += 1
                 }
-            })
-            h += (state.file_to_functions[file_name].size + 1) * 100
-            nodeIdSet.add(file_name)
-
-            Array.from(state.file_to_functions[file_name]).forEach((function_name, function_index) => {
                 vec.push({
-                    id: function_name.slice(0, function_name.lastIndexOf('(')),
-                    data: { label: function_name },
+                    id: file_name,
+                    data: { label: file_name },
                     position: {
-                        x: 25,
-                        y: (function_index + 1) * 70
+                        x: 500 * w,
+                        y: h,
                     },
                     className: 'light',
-                    parentId: file_name,
                     style: {
-                        width: 400 - 50,
+                        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                        width: 400,
+                        height: (state.file_to_functions[file_name].size + 1) * 70,
                     }
                 })
-                nodeIdSet.add(function_name.slice(0, function_name.lastIndexOf('(')))
+                h += (state.file_to_functions[file_name].size + 1) * 100
+                nodeIdSet.add(file_name)
+            }
+
+            Array.from(state.file_to_functions[file_name]).forEach((function_name, function_index) => {
+                if (!nodeIdSet.has(function_name.slice(0, function_name.lastIndexOf('(')))) {
+                    vec.push({
+                        id: function_name.slice(0, function_name.lastIndexOf('(')),
+                        data: { label: function_name },
+                        position: {
+                            x: 25,
+                            y: (function_index + 1) * 70
+                        },
+                        className: 'light',
+                        parentId: file_name,
+                        style: {
+                            width: 400 - 50,
+                        }
+                    })
+                    nodeIdSet.add(function_name.slice(0, function_name.lastIndexOf('(')))
+                }
             })
         })
 
         // { id: 'e1-2', source: '1', target: '2', animated: true },
         const tmp = []
-        
+        const linkIdSet = new Set([])
+
         Object.keys(state.import_definition).forEach((function_name, index) => {
-            if (nodeIdSet.has(function_name)) {
+            if (nodeIdSet.has(function_name)
+                && nodeIdSet.has(state.import_definition[function_name]['function_called_in'])
+                && !linkIdSet.has(`${function_name}-${state.import_definition[function_name]['function_called_in']}-import`)) {
                 tmp.push({
-                    id: `${function_name}-${state.import_definition[function_name]['function_called_in']}`,
+                    id: `${function_name}-${state.import_definition[function_name]['function_called_in']}-import`,
                     source: function_name,
                     target: state.import_definition[function_name]['function_called_in'],
                     animated: false,
                 })
+                linkIdSet.add(`${function_name}-${state.import_definition[function_name]['function_called_in']}-import`)
             }
         })
-        
-        
+
+
         // console.log(state.function_links)
         // console.log(nodeIdSet)
         state.function_links.forEach((item) => {
             // console.log(item)
-            if (nodeIdSet.has(item['source']) && nodeIdSet.has(item['target'])) {
-                
+            if (nodeIdSet.has(item['source'])
+                && nodeIdSet.has(item['target'])
+                && !linkIdSet.has(`${item['source']}-${item['target']}-function-link`)) {
+
                 tmp.push({
-                    id: `${item['source']}-${item['target']}-link`,
+                    id: `${item['source']}-${item['target']}-function-link`,
                     source: item['source'],
                     target: item['target'],
                     animated: true,
                 })
+                linkIdSet.add(`${item['source']}-${item['target']}-function-link`)
             }
         })
         // console.log(vec)
+        setEdges([])
         setNodes(vec)
         setEdges(tmp)
     }
 
     useEffect(() => {
-        updateNodes()
+        if (state.rerenderGraph) {
 
-        dispatch({
-            'value': {
-                'rerenderGraph': false,
-            }
-        })
+            updateGraph()
+
+            dispatch({
+                'value': {
+                    'rerenderGraph': false,
+                }
+            })
+        }
     }, [state.rerenderGraph])
 
     return (
@@ -157,6 +172,7 @@ function DesktopGraph() {
             <Controls />
             <Background />
         </ReactFlow>
+
 
 
     )
