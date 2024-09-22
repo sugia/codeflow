@@ -149,7 +149,7 @@ const DesktopGraph = () => {
                                 <Row justify='center'>
                                     <Space.Compact>
                                         <Popover content={<Typography>Open Folder</Typography>}>
-                                            <Upload directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                                            <Upload method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
                                                 loadFolder(info)
                                             }}>
                                                 <Button style={{ 'marginTop': '25px' }} shape='round'
@@ -180,7 +180,7 @@ const DesktopGraph = () => {
                 Object.keys(state.file_to_functions).length === 0 ?
 
                     <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
-                        <Upload.Dragger directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                        <Upload.Dragger method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
 
                             loadFolder(info)
                         }}>
