@@ -231,7 +231,7 @@ const DesktopGraph = () => {
                         }}>
                             <div style={{ 'width': '400px', 'height': '200px' }}>
                                 <p className="ant-upload-drag-icon">
-                                    <InboxOutlined />
+                                    <FolderOpenOutlined />
                                 </p>
                                 <p className="ant-upload-text">Click or drag folder to this area to upload</p>
                                 <p className="ant-upload-hint">
