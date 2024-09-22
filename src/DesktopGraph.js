@@ -235,7 +235,7 @@ const DesktopGraph = () => {
                                 </p>
                                 <p className="ant-upload-text">Click or drag folder to this area to upload</p>
                                 <p className="ant-upload-hint">
-                                    Easily upload your code directory by clicking to select a folder from your device or dragging a folder and dropping into the box here.
+                                    Easily upload your code folder by clicking to select a folder from your device or dragging a folder and dropping into the box here.
                                 </p>
                             </div>
                         </Upload.Dragger>
