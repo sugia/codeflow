@@ -24,3 +24,11 @@ cd codeflow
 npm install
 npm run start
 ```
+
+# License
+
+CodeFlow is licensed under the [MIT License](https://github.com/sugia/codeflow?tab=MIT-1-ov-file#readme).
+
+# Contact
+
+For any questions or support, please reach out to us at contact@jomimi.com
