@@ -113,6 +113,34 @@ const subtract = function(a, b) {
   return a - b;
 };
 */
+
+const getWholeFunction = (match, def, code) => {
+    // console.log(match.index, def.length)
+    if (!match) {
+        return ''; // No match for function declaration
+    }
+
+    let openBraces = 1;
+    let closeBraces = 0;
+    let index = match.index + def.length;
+
+    // Loop through the code starting after the match to count braces
+    while (index < code.length && openBraces !== closeBraces) {
+        if (code[index] === '{') {
+            openBraces++;
+        } else if (code[index] === '}') {
+            closeBraces++;
+        }
+        index++;
+    }
+
+    if (openBraces === closeBraces) {
+        return code.substring(match.index, index); // Return the full function
+    }
+    return ''; // No matching closing brace found
+
+}
+
 const getFunctionsDefined = (code) => {
     const matches = []
     let match
@@ -123,13 +151,16 @@ const getFunctionsDefined = (code) => {
         // console.log(match)
         if (match[2]) {
             // Function Declaration
-            matches.push(match[2])
+            //console.log(getWholeFunction(match, match[2], code))
+            matches.push(getWholeFunction(match, match[2], code))
         } else if (match[5]) {
             // Function Expression
-            matches.push(match[5])
+            //console.log(getWholeFunction(match, match[5], code))
+            matches.push(getWholeFunction(match, match[5], code))
         } else if (match[8]) {
             // Arrow Function
-            matches.push(match[8])
+            //console.log(getWholeFunction(match, match[8], code))
+            matches.push(getWholeFunction(match, match[8], code))
         }
     }
 
