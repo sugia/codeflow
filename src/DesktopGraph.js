@@ -23,6 +23,9 @@ import * as antd_all_functions from 'antd'
 import {
     InboxOutlined,
     FolderOpenOutlined,
+    FileTextOutlined,
+    FileSearchOutlined,
+    FileProtectOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -91,7 +94,7 @@ const DesktopGraph = () => {
                     }
                 }
             )
-            
+
             setFunctionDefinition(
                 tmp => {
                     return {
@@ -116,7 +119,7 @@ const DesktopGraph = () => {
                     ]
                 }
             )
-            
+
 
             dispatch({
                 'value': {
@@ -128,7 +131,7 @@ const DesktopGraph = () => {
                 }
             })
 
-            
+
         }
 
         reader.readAsText(file)
@@ -155,6 +158,25 @@ const DesktopGraph = () => {
                             <Col span={4}>
                                 <Row justify='center'>
                                     <Space.Compact>
+                                        <Popover content={<Typography>Open File</Typography>}>
+                                            <Upload method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
+                                                loadFolder(info)
+                                            }}>
+                                                <Button style={{ 'marginTop': '25px' }} shape='round'
+                                                    onClick={() => {
+
+                                                        setImportDefinition({})
+                                                        setFunctionDefinition({})
+                                                        setFileToFunctions({})
+                                                        setFunctionLinks([])
+                                                    }}
+                                                    icon={
+                                                        <FileSearchOutlined style={{ 'color': 'gray' }} />
+                                                    }
+                                                >
+                                                </Button>
+                                            </Upload>
+                                        </Popover>
                                         <Popover content={<Typography>Open Folder</Typography>}>
                                             <Upload method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
                                                 loadFolder(info)
@@ -187,17 +209,33 @@ const DesktopGraph = () => {
                 Object.keys(state.file_to_functions).length === 0 ?
 
                     <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
+                        <Upload.Dragger method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
+
+                            loadFolder(info)
+                        }}>
+                            <div style={{ 'width': '400px', 'height': '200px' }}>
+                                <p className="ant-upload-drag-icon">
+                                    <FileSearchOutlined />
+                                </p>
+                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                                <p className="ant-upload-hint">
+                                    Easily upload your code file by clicking to select a file from your device or dragging a file and dropping into the box here.
+                                </p>
+                            </div>
+                        </Upload.Dragger>
+
+                        <Col style={{ 'width': '20px' }}></Col>
                         <Upload.Dragger method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
 
                             loadFolder(info)
                         }}>
-                            <div style={{ 'width': '400px' }}>
+                            <div style={{ 'width': '400px', 'height': '200px' }}>
                                 <p className="ant-upload-drag-icon">
                                     <InboxOutlined />
                                 </p>
                                 <p className="ant-upload-text">Click or drag folder to this area to upload</p>
                                 <p className="ant-upload-hint">
-                                    Easily upload your code directory by clicking to select folders from your device or dragging a folder and dropping into the box here.
+                                    Easily upload your code directory by clicking to select a folder from your device or dragging a folder and dropping into the box here.
                                 </p>
                             </div>
                         </Upload.Dragger>
