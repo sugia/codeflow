@@ -67,7 +67,7 @@ const DesktopGraph = () => {
 
 
     const [importDefinition, setImportDefinition] = useState({})
-    const [functionDefinition, setFunctionDefinition] = useState({})
+    // const [functionDefinition, setFunctionDefinition] = useState({})
     const [fileToFunctions, setFileToFunctions] = useState({})
     const [functionLinks, setFunctionLinks] = useState([])
 
@@ -81,6 +81,7 @@ const DesktopGraph = () => {
 
         reader.onload = (e) => {
             const fileExtension = getFileExtension(file.name)
+            // console.log(fileExtension)
             if (!(fileExtension in languageMap)) {
                 return
             }
@@ -90,33 +91,35 @@ const DesktopGraph = () => {
                 tmp => {
                     return {
                         ...tmp,
-                        ...languageMap[fileExtension].getImportDefinition(file.name, e.target.result),
+                        ...(languageMap[fileExtension]?.getImportDefinition(file.name, e.target.result) || {}),
                     }
                 }
             )
-
+            /*
             setFunctionDefinition(
                 tmp => {
                     return {
                         ...tmp,
-                        ...languageMap[fileExtension].getFunctionDefinition(file.name, e.target.result),
+                        ...(languageMap[fileExtension]?.getFunctionDefinition(file.name, e.target.result) || {}),
                     }
                 }
             )
+            */
             setFileToFunctions(
                 tmp => {
                     return {
                         ...tmp,
-                        ...languageMap[fileExtension].getFileToFunctions(file.name, e.target.result),
+                        ...(languageMap[fileExtension]?.getFileToFunctions(file.name, e.target.result) || {}),
                     }
                 }
             )
+            
             setFunctionLinks(
                 tmp => {
-                    return [
+                    return {
                         ...tmp,
-                        ...languageMap[fileExtension].getFunctionLinks(e.target.result),
-                    ]
+                        ...(languageMap[fileExtension]?.getFunctionLinks(file.name, e.target.result) || {}),
+                    }
                 }
             )
 
@@ -124,13 +127,18 @@ const DesktopGraph = () => {
             dispatch({
                 'value': {
                     'import_definition': importDefinition,
-                    'function_definition': functionDefinition,
+                    // 'function_definition': functionDefinition,
                     'file_to_functions': fileToFunctions,
                     'function_links': functionLinks,
                     'rerenderGraph': true,
                 }
             })
 
+            /*
+            console.log('importDefinition', importDefinition)
+            console.log('fileToFunctions', fileToFunctions)
+            console.log('functionLinks', functionLinks)
+            */
 
         }
 
@@ -166,7 +174,7 @@ const DesktopGraph = () => {
                                                     onClick={() => {
 
                                                         setImportDefinition({})
-                                                        setFunctionDefinition({})
+                                                        // setFunctionDefinition({})
                                                         setFileToFunctions({})
                                                         setFunctionLinks([])
                                                     }}
@@ -185,7 +193,7 @@ const DesktopGraph = () => {
                                                     onClick={() => {
 
                                                         setImportDefinition({})
-                                                        setFunctionDefinition({})
+                                                        // setFunctionDefinition({})
                                                         setFileToFunctions({})
                                                         setFunctionLinks([])
                                                     }}

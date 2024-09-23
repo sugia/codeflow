@@ -1,10 +1,20 @@
 import * as js from './languages/js'
+import * as py from './languages/py'
+
+/*
+    getImportDefinition(file_name, code)
+    // ? getFunctionDefinition(file_name, code)
+    getFileToFunctions(file_name, code)
+    getFunctionLinks(code)
+*/
 
 export const languageMap = {
     '.js': js,
     '.jsx': js,
     '.ts': js,
     '.tsx': js,
+
+    '.py': py,
 }
 /*
 export const languageMap = {

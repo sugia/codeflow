@@ -59,14 +59,22 @@ function DesktopGraph() {
         let w = 0
 
         const nodeIdSet = new Set([])
+        /*
+            file_to_functions
+            {
+                file_name: [{ 'function_name', 'function_parameters'}]
+            }
+
+        */
         Object.keys(state.file_to_functions).forEach((file_name, index) => {
-            if (!nodeIdSet.has(file_name)) {
+            const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
+            if (!nodeIdSet.has(file_key)) {
                 if (window.innerHeight < h + (state.file_to_functions[file_name].size + 1) * 100) {
                     h = 0
                     w += 1
                 }
                 vec.push({
-                    id: file_name,
+                    id: file_key,
                     data: { label: file_name },
                     position: {
                         x: 500 * w,
@@ -80,25 +88,27 @@ function DesktopGraph() {
                     }
                 })
                 h += (state.file_to_functions[file_name].size + 1) * 100
-                nodeIdSet.add(file_name)
+                nodeIdSet.add(file_key)
             }
 
-            Array.from(state.file_to_functions[file_name]).forEach((function_name, function_index) => {
-                if (!nodeIdSet.has(function_name.slice(0, function_name.lastIndexOf('(')))) {
+            Array.from(state.file_to_functions[file_name]).forEach((item, item_index) => {
+                const function_key = file_key + '-' + item.function_name
+                const nodeId = function_key
+                if (!nodeIdSet.has(nodeId)) {
                     vec.push({
-                        id: function_name.slice(0, function_name.lastIndexOf('(')),
-                        data: { label: function_name },
+                        id: nodeId,
+                        data: { label: item.function_name + '(' + item.function_parameters + ')' },
                         position: {
                             x: 25,
-                            y: (function_index + 1) * 70
+                            y: (item_index + 1) * 70
                         },
                         className: 'light',
-                        parentId: file_name,
+                        parentId: file_key,
                         style: {
                             width: 400 - 50,
                         }
                     })
-                    nodeIdSet.add(function_name.slice(0, function_name.lastIndexOf('(')))
+                    nodeIdSet.add(nodeId)
                 }
             })
         })
@@ -107,39 +117,74 @@ function DesktopGraph() {
         const tmp = []
         const linkIdSet = new Set([])
 
+        /*
+            import_definition
+            {
+                file_key + '-' + function_name: [
+                    file_key called,
+                ]
+            }
+
+        */
         Object.keys(state.import_definition).forEach((function_name, index) => {
-            if (nodeIdSet.has(function_name)
-                && nodeIdSet.has(state.import_definition[function_name]['function_called_in'])
-                && !linkIdSet.has(`${function_name}-${state.import_definition[function_name]['function_called_in']}-import`)) {
-                tmp.push({
-                    id: `${function_name}-${state.import_definition[function_name]['function_called_in']}-import`,
-                    source: function_name,
-                    target: state.import_definition[function_name]['function_called_in'],
-                    animated: false,
+            // console.log(function_name)
+            if (nodeIdSet.has(function_name)) {
+                Array.from(state.import_definition[function_name]).forEach((file_name, file_index) => {
+                    // console.log(file_name)
+                    if (nodeIdSet.has(file_name)) {
+                        const linkId = `${function_name}-${file_name}-import`
+                        if (!linkIdSet.has(linkId)) {
+                            tmp.push({
+                                id: linkId,
+                                source: function_name,
+                                target: file_name,
+                                animated: false,
+                            })
+                            linkIdSet.add(linkId)
+                        }
+                    }
                 })
-                linkIdSet.add(`${function_name}-${state.import_definition[function_name]['function_called_in']}-import`)
+
             }
         })
 
 
-        // console.log(state.function_links)
-        // console.log(nodeIdSet)
-        state.function_links.forEach((item) => {
-            // console.log(item)
-            if (nodeIdSet.has(item['source'])
-                && nodeIdSet.has(item['target'])
-                && !linkIdSet.has(`${item['source']}-${item['target']}-function-link`)) {
-
-                tmp.push({
-                    id: `${item['source']}-${item['target']}-function-link`,
-                    source: item['source'],
-                    target: item['target'],
-                    animated: true,
-                })
-                linkIdSet.add(`${item['source']}-${item['target']}-function-link`)
+        /*
+            function_links
+            {
+                file_name + '-' + function_name: [
+                    file_name + '-' + function_name,
+                    file_name + '-' + function_name,
+                ]
             }
+
+        */
+        Object.keys(state.function_links).forEach((function_target) => {
+
+            // console.log(function_target)
+            if (nodeIdSet.has(function_target)) {
+                Array.from(state.function_links[function_target]).forEach((function_source, function_index) => {
+                    // console.log(function_source)
+                    if (nodeIdSet.has(function_source)) {
+                        const linkId = `${function_source}-${function_target}-function-link`
+                        if (!linkIdSet.has(linkId)) {
+                            tmp.push({
+                                id: linkId,
+                                source: function_source,
+                                target: function_target,
+                                animated: true,
+                            })
+                            linkIdSet.add(linkId)
+
+                            // console.log(linkId)
+                        }
+                    }
+                })
+            }
+
+
         })
-        // console.log(vec)
+        // console.log(tmp)
         setEdges([])
         setNodes(vec)
         setEdges(tmp)
