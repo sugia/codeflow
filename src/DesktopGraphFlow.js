@@ -47,6 +47,9 @@ function DesktopGraph() {
 
 
     const updateGraph = () => {
+        setEdges([])
+        setNodes([])
+        
         const vec = []
         /*
         id: '2',
@@ -186,7 +189,7 @@ function DesktopGraph() {
 
         })
         // console.log(tmp)
-        setEdges([])
+
         setNodes(vec)
         setEdges(tmp)
     }
