@@ -1,76 +1,84 @@
-
-
 export const getImportDefinition = (file_name, code) => {
-    const importRegex = /import\s+(?:(?<default>\w+)\s*,?\s*)?(?:\{(?<named>[\w\s,]*)\}\s*,?\s*)?(?:\*\s+as\s+(?<namespace>\w+)\s*,?\s*)?from\s+['"`](?<module>.+?)['"`];?/g;
+    const importRegex = /import\s+(?:(?<default>\w+)\s*,?\s*)?(?:\{(?<named>[\w\s,]*)\}\s*,?\s*)?(?:\*\s+as\s+(?<namespace>\w+)\s*,?\s*)?from\s+['"`](?<module>.+?)['"`];?/g
 
-    const matches = {};
-    let match;
+    const matches = {}
+    let match
 
-    const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
+    const file_key_target = file_name.slice(0, file_name.lastIndexOf('.'))
     // function_name: 
     while ((match = importRegex.exec(code)) !== null) {
         if (match.groups.namespace) {
-            const key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + match.groups.namespace
+            const function_key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + match.groups.namespace
 
-            if (key in matches) {
-                matches[key].add(file_key)
+            if (function_key in matches) {
+                matches[function_key].add(
+                    {
+                        'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                        'file_key_target': file_key_target,
+                        'function_name': match.groups.namespace,
+                    }
+                )
             } else {
-                matches[key] = new Set([file_key])
+                matches[function_key] = new Set([
+                    {
+                        'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                        'file_key_target': file_key_target,
+                        'function_name': match.groups.namespace,
+                    }
+                ])
             }
         }
 
         if (match.groups.default) {
-            const key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + match.groups.default
-            if (key in matches) {
-                matches[key].add(file_key)
+            const function_key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + match.groups.default
+
+            if (function_key in matches) {
+                matches[function_key].add(
+                    {
+                        'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                        'file_key_target': file_key_target,
+                        'function_name': match.groups.default,
+                    }
+                )
             } else {
-                matches[key] = new Set([file_key])
+                matches[function_key] = new Set([
+                    {
+                        'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                        'file_key_target': file_key_target,
+                        'function_name': match.groups.default,
+                    }
+                ])
             }
         }
 
         if (match.groups.named) {
-            match.groups.named.split(',').map(i => i.trim()).filter(Boolean).forEach((item) => {
-                const key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + item
-                if (key in matches) {
-                    matches[key].add(file_key)
+            match.groups.named.split(',').map(i => i.trim()).filter(Boolean).forEach((named) => {
+                const function_key = match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1) + '-' + named
+
+                if (function_key in matches) {
+                    matches[function_key].add(
+                        {
+                            'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                            'file_key_target': file_key_target,
+                            'function_name': named,
+                        }
+                    )
                 } else {
-                    matches[key] = new Set([file_key])
+                    matches[function_key] = new Set([
+                        {
+                            'file_key_source': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
+                            'file_key_target': file_key_target,
+                            'function_name': named,
+                        }
+                    ])
                 }
             })
         }
     }
 
-    return matches;
+    return matches
 }
 
-
-// Combine the regex for function declarations, function expressions, and arrow functions
-/*
-export const getFunctionDefinition = (file_name, code) => {
-    const matches = {};
-    let match;
-
-    const regex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g
-
-    while ((match = regex.exec(code)) !== null) {
-        if (match[2]) {
-            // Function Declaration
-            matches[match[2]] = { 'file_name': file_name, 'function_parameters': match[3] }
-            // matches.push({ type: file_name, name: match[2], params: match[3] });
-        } else if (match[5]) {
-            // Function Expression
-            matches[match[5]] = { 'file_name': file_name, 'function_parameters': match[6] }
-            // matches.push({ type: file_name, name: match[5], params: match[6] });
-        } else if (match[8]) {
-            // Arrow Function
-            matches[match[8]] = { 'file_name': file_name, 'function_parameters': match[9] }
-            // matches.push({ type: file_name, name: match[8], params: match[9] });
-        }
-    }
-
-    return matches;
-}
-*/
 
 export const getFileToFunctions = (file_name, code) => {
     const matches = {};
@@ -79,27 +87,7 @@ export const getFileToFunctions = (file_name, code) => {
     const regex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g
 
     while ((match = regex.exec(code)) !== null) {
-        /*
-        if (match[2]) {
-            if (file_key in matches) {
-                matches[file_key].add(`${match[2]}(${match[3]})`)
-            } else {
-                matches[file_key] = new Set([`${match[2]}(${match[3]})`])
-            }
-        } else if (match[5]) {
-            if (file_key in matches) {
-                matches[file_key].add(`${match[5]}(${match[6]})`)
-            } else {
-                matches[file_key] = new Set([`${match[5]}(${match[6]})`])
-            }
-        } else if (match[8]) {
-            if (file_key in matches) {
-                matches[file_key].add(`${match[8]}(${match[9]})`)
-            } else {
-                matches[file_key] = new Set([`${match[8]}(${match[9]})`])
-            }
-        }
-        */
+
         if (match[2]) {
             if (file_name in matches) {
                 matches[file_name].add({ 'function_name': match[2], 'function_parameters': match[3] })
@@ -174,46 +162,6 @@ const jsCode = `
   import defaultExport, { namedExport1, namedExport2 } from './module';
 `
  */
-const getFunctionsImported = (code) => {
-    const regex = /import\s+(?:(?<default>\w+)\s*,?\s*)?(?:\{(?<named>[\w\s,]*)\}\s*,?\s*)?(?:\*\s+as\s+(?<namespace>\w+)\s*,?\s*)?from\s+['"`](?<module>.+?)['"`];?/g
-
-    const matches = []
-    let match
-
-    // function_name: 
-    while ((match = regex.exec(code)) !== null) {
-
-        if (match.groups.namespace) {
-            let item = {
-                'file_key': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
-                'function_name': match.groups.namespace,
-            }
-            matches.push(item)
-        }
-
-        if (match.groups.default) {
-            let item = {
-                'file_key': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
-                'function_name': match.groups.default,
-            }
-            matches.push(item)
-        }
-
-        if (match.groups.named) {
-
-            match.groups.named.split(',').map(i => i.trim()).filter(Boolean).forEach((named) => {
-                let item = {
-                    'file_key': match.groups.module.slice(match.groups.module.lastIndexOf('/') + 1),
-                    'function_name': named,
-                }
-                matches.push(item)
-            })
-        }
-    }
-
-    return matches
-}
-
 
 /*
 function add(a, b) {
@@ -278,7 +226,7 @@ export const getFunctionLinks = (file_name, code) => {
     const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
 
     const functions_defined = getFunctionsDefined(file_name, code)
-    const functions_imported = getFunctionsImported(code)
+    const functions_imported = getImportDefinition(file_name, code)
 
     while ((match = functionRegex.exec(code)) !== null) {
         let functionName
@@ -299,17 +247,30 @@ export const getFunctionLinks = (file_name, code) => {
 
 
         if (functionName && tmp) {
-            [...functions_defined, ...functions_imported].forEach((item) => {
-                
-                // console.log(item)
-
+            functions_defined.forEach((item) => {
                 if (tmp.includes(item.function_name) && functionName !== item.function_name) {
-                    if (functionName in functionLinks) {
-                        functionLinks[file_key + '-' + functionName].add(item.file_key + '-' + item.function_name)
+                    const functionNameKey = file_key + '-' + functionName
+                    if (functionNameKey in functionLinks) {
+                        functionLinks[functionNameKey].add(item.file_key + '-' + item.function_name)
                     } else {
-                        functionLinks[file_key + '-' + functionName] = new Set([item.file_key + '-' + item.function_name])
+                        functionLinks[functionNameKey] = new Set([item.file_key + '-' + item.function_name])
                     }
+                }
+            })
 
+            Object.keys(functions_imported).forEach((function_key) => {
+                if (tmp.includes(functions_imported[function_key].function_name) &&
+                    functionName !== functions_imported[function_key].function_name) {
+                        const functionNameKey = file_key + '-' + functionName
+                    if (functionNameKey in functionLinks) {
+                        functionLinks[functionNameKey].add(
+                            functions_imported[function_key].file_key_source + '-' + functions_imported[function_key].function_name
+                        )
+                    } else {
+                        functionLinks[functionNameKey] = new Set(
+                            [functions_imported[function_key].file_key_source + '-' + functions_imported[function_key].function_name]
+                        )
+                    }
                 }
             })
         }

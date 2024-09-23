@@ -126,18 +126,19 @@ function DesktopGraph() {
             }
 
         */
-        Object.keys(state.import_definition).forEach((function_name, index) => {
+        // console.log(state.import_definition)
+        Object.keys(state.import_definition).forEach((function_key, index) => {
             // console.log(function_name)
-            if (nodeIdSet.has(function_name)) {
-                Array.from(state.import_definition[function_name]).forEach((file_name, file_index) => {
+            if (nodeIdSet.has(function_key)) {
+                Array.from(state.import_definition[function_key]).forEach((item, file_index) => {
                     // console.log(file_name)
-                    if (nodeIdSet.has(file_name)) {
-                        const linkId = `${function_name}-${file_name}-import`
+                    if (nodeIdSet.has(item.file_key_target)) {
+                        const linkId = `${function_key}-${item.file_key_target}-import`
                         if (!linkIdSet.has(linkId)) {
                             tmp.push({
                                 id: linkId,
-                                source: function_name,
-                                target: file_name,
+                                source: function_key,
+                                target: item.file_key_target,
                                 animated: false,
                             })
                             linkIdSet.add(linkId)
