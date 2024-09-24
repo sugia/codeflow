@@ -46,18 +46,21 @@ export const languageMap = {
 }
 /*
 export const languageMap = {
+    '.js': 'JavaScript',
+    '.jsx': 'JavaScript (React)',
+    '.ts': 'TypeScript',
+    '.tsx': 'TypeScript (React),
+
     '.py': 'Python',
-    '.cpp': 'C++',
+
+
+    '.go': 'Golang',
+
     '.java': 'Java',
+    '.cpp': 'C++',
     '.c': 'C',
     '.cs': 'C#',
 
-    '.js': js,
-    '.jsx': js,
-    '.ts': js,
-    '.tsx': js,
-
-    '.go': 'Golang',
     '.php': 'PHP',
 
     '.rb': 'Ruby',

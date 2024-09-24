@@ -74,7 +74,6 @@ const DesktopGraph = () => {
 
     const loadFolder = (info) => {
 
-
         const file = info.file.originFileObj
 
         const reader = new FileReader()
@@ -86,7 +85,6 @@ const DesktopGraph = () => {
                 return
             }
 
-
             setImportDefinition(
                 tmp => {
                     return {
@@ -95,16 +93,7 @@ const DesktopGraph = () => {
                     }
                 }
             )
-            /*
-            setFunctionDefinition(
-                tmp => {
-                    return {
-                        ...tmp,
-                        ...(languageMap[fileExtension]?.getFunctionDefinition(file.name, e.target.result) || {}),
-                    }
-                }
-            )
-            */
+
             setFileToFunctions(
                 tmp => {
                     return {
@@ -113,7 +102,7 @@ const DesktopGraph = () => {
                     }
                 }
             )
-            
+
             setFunctionLinks(
                 tmp => {
                     return {
@@ -123,11 +112,9 @@ const DesktopGraph = () => {
                 }
             )
 
-
             dispatch({
                 'value': {
                     'import_definition': importDefinition,
-                    // 'function_definition': functionDefinition,
                     'file_to_functions': fileToFunctions,
                     'function_links': functionLinks,
                     'rerenderGraph': true,
@@ -172,9 +159,7 @@ const DesktopGraph = () => {
                                             }}>
                                                 <Button style={{ 'marginTop': '25px' }} shape='round'
                                                     onClick={() => {
-
                                                         setImportDefinition({})
-                                                        // setFunctionDefinition({})
                                                         setFileToFunctions({})
                                                         setFunctionLinks([])
                                                     }}
@@ -249,7 +234,15 @@ const DesktopGraph = () => {
                         </Upload.Dragger>
                     </Row>
                     :
-                    <DesktopGraphFlow />
+                    <>
+                        <div style={{
+                            'backgroundColor': 'white', 'height': '14px', 'width': '64px', 'zIndex': 1,
+                            'position': 'fixed', 'bottom': '0px', 'right': '0px'
+                        }}>
+
+                        </div>
+                        <DesktopGraphFlow />
+                    </>
             }
 
         </>

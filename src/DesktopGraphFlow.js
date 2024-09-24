@@ -49,7 +49,7 @@ function DesktopGraph() {
     const updateGraph = () => {
         setEdges([])
         setNodes([])
-        
+
         const vec = []
         /*
         id: '2',
@@ -85,7 +85,7 @@ function DesktopGraph() {
                     },
                     className: 'light',
                     style: {
-                        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                        backgroundColor: 'aliceBlue',
                         width: 400,
                         height: (state.file_to_functions[file_name].size + 1) * 70,
                     }
@@ -217,6 +217,7 @@ function DesktopGraph() {
             onConnect={onConnect}
             fitView
         >
+
             <MiniMap />
             <Controls />
             <Background />
