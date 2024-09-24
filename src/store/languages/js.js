@@ -196,22 +196,28 @@ const getWholeFunction = (match, def, code) => {
         return ''; // No match for function declaration
     }
 
-    let openBraces = 1;
-    let closeBraces = 0;
-    let index = match.index + def.length;
+    let openBraces = 0
+    let closeBraces = 0
+    let index = match.index
 
+    while (index < code.length && code[index] !== '{') {
+        index++
+    }
+    index++
+    openBraces++
     // Loop through the code starting after the match to count braces
     while (index < code.length && openBraces !== closeBraces) {
+        //console.log(code[index])
         if (code[index] === '{') {
             openBraces++;
         } else if (code[index] === '}') {
             closeBraces++;
         }
-        index++;
+        index++
     }
-
+    //console.log(openBraces, closeBraces)
     if (openBraces === closeBraces) {
-        return code.substring(match.index, index); // Return the full function
+        return code.substring(match.index, index) // Return the full function
     }
     return ''; // No matching closing brace found
 
@@ -223,15 +229,13 @@ export const getFunctionLinks = (file_name, code) => {
     const functionLinks = {}
     let match
 
-    const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
-
-    const functions_defined = getFunctionsDefined(file_name, code)
-    const functions_imported = getImportDefinition(file_name, code)
 
     while ((match = functionRegex.exec(code)) !== null) {
         let functionName
         let tmp
 
+
+        //console.log('~~~~~~~~~~')
         if (match[2]) {
             functionName = match[2]
             tmp = getWholeFunction(match, match[2], code)
@@ -244,7 +248,13 @@ export const getFunctionLinks = (file_name, code) => {
         }
 
 
+        const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
 
+        const functions_defined = getFunctionsDefined(file_name, code)
+        const functions_imported = getImportDefinition(file_name, code)
+    
+        //console.log(functions_imported)
+        //console.log(functionName, tmp)
 
         if (functionName && tmp) {
             functions_defined.forEach((item) => {
@@ -259,19 +269,20 @@ export const getFunctionLinks = (file_name, code) => {
             })
 
             Object.keys(functions_imported).forEach((function_key) => {
-                if (tmp.includes(functions_imported[function_key].function_name) &&
-                    functionName !== functions_imported[function_key].function_name) {
+                Array.from(functions_imported[function_key]).forEach((item) => {
+                    if (tmp.includes(item.function_name) && functionName !== item.function_name) {
                         const functionNameKey = file_key + '-' + functionName
-                    if (functionNameKey in functionLinks) {
-                        functionLinks[functionNameKey].add(
-                            functions_imported[function_key].file_key_source + '-' + functions_imported[function_key].function_name
-                        )
-                    } else {
-                        functionLinks[functionNameKey] = new Set(
-                            [functions_imported[function_key].file_key_source + '-' + functions_imported[function_key].function_name]
-                        )
+                        if (functionNameKey in functionLinks) {
+                            functionLinks[functionNameKey].add(
+                                item.file_key_source + '-' + item.function_name
+                            )
+                        } else {
+                            functionLinks[functionNameKey] = new Set([
+                                item.file_key_source + '-' + item.function_name
+                            ])
+                        }
                     }
-                }
+                })
             })
         }
     }
