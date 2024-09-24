@@ -235,6 +235,7 @@ export const initialState = {
     file_to_functions: {},
     function_links: [],
     rerenderGraph: false,
+    isOpenFileOrFolderVisible: true,
 }
 
 

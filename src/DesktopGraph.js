@@ -118,6 +118,7 @@ const DesktopGraph = () => {
                     'file_to_functions': fileToFunctions,
                     'function_links': functionLinks,
                     'rerenderGraph': true,
+                    'isOpenFileOrFolderVisible': false,
                 }
             })
 
@@ -178,7 +179,6 @@ const DesktopGraph = () => {
                                                     onClick={() => {
 
                                                         setImportDefinition({})
-                                                        // setFunctionDefinition({})
                                                         setFileToFunctions({})
                                                         setFunctionLinks([])
                                                     }}
@@ -198,10 +198,14 @@ const DesktopGraph = () => {
                     </Row>
                 </Layout.Header>
             </Affix>
+
+
+
+
             {
                 Object.keys(state.file_to_functions).length === 0 ?
-
-                    <Row justify='center' align='middle' style={{ 'height': '80vh' }}>
+                    <Row justify='center' align='middle'
+                        style={{ 'height': '80vh', 'display': state.isOpenFileOrFolderVisible ? 'flex' : 'none' }}>
                         <Upload.Dragger method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
 
                             loadFolder(info)
@@ -233,6 +237,7 @@ const DesktopGraph = () => {
                             </div>
                         </Upload.Dragger>
                     </Row>
+
                     :
                     <>
                         <div style={{
@@ -244,6 +249,7 @@ const DesktopGraph = () => {
                         <DesktopGraphFlow />
                     </>
             }
+
 
         </>
     );

@@ -188,8 +188,10 @@ function DesktopGraph() {
 
 
         })
-        // console.log(tmp)
 
+
+        // console.log(vec)
+        // console.log(tmp)
         setNodes(vec)
         setEdges(tmp)
     }
