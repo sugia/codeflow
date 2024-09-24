@@ -3,9 +3,37 @@ import * as py from './languages/py'
 
 /*
     getImportDefinition(file_name, code)
-    // ? getFunctionDefinition(file_name, code)
+    return {
+        // file_key = file_name without suffix
+        // function_key = file_key + '-' + function_name
+        [function_key]: new Set([
+            {
+                'file_key_source': file_key defined,
+                'file_key_target': file_key called,
+                'function_name': function_name without parameters,
+            }
+        ])
+    }
+
     getFileToFunctions(file_name, code)
-    getFunctionLinks(code)
+    return {
+        // file_name has suffix
+        [file_name]: new Set([
+            { 
+                'function_name': function name, 
+                'function_parameters': function parameters, 
+            }
+        ])
+    }
+
+    getFunctionLinks(file_name, code)
+    return {
+        // file_key = file_name without suffix
+        // function_key = file_key + '-' + function_name
+        [function_key]: new Set([
+            function_key
+        ])
+    }
 */
 
 export const languageMap = {
