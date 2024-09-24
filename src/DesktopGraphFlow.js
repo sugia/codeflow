@@ -85,7 +85,7 @@ function DesktopGraph() {
                     },
                     className: 'light',
                     style: {
-                        backgroundColor: 'aliceBlue',
+                        backgroundColor: 'rgba(30, 144, 255, 0.2)', // DodgerBlue with 0.2 alpha
                         width: 400,
                         height: (state.file_to_functions[file_name].size + 1) * 70,
                     }
