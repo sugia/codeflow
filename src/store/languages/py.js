@@ -1,42 +1,70 @@
 /*
-const code = `
 import os
-import sys
-from datetime import datetime, timedelta
-from collections import namedtuple as nt
-`
+import sys, json
+from collections import defaultdict, Counter
+from mymodule import myfunc
 */
 
 export const getImportDefinition = (file_name, code) => {
-  const importRegex = /(?:import\s+([\w.,\s]+))|(?:from\s+([\w.]+)\s+import\s+([\w.,\s]+))/g
+  const importRegex = /from\s(.+)\s+import\s+(.+)|import\s+(.+)/g
 
-  const imports = {};
-  let match;
+  const matches = {}
+  let match
 
-  // matches[match.groups.namespace] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module }
+  const file_key_target = file_name.slice(0, file_name.lastIndexOf('.'))
+  // function_name: 
   while ((match = importRegex.exec(code)) !== null) {
-    if (match[1]) {
-      // For 'import module'
-
-      match[1].split(',').map(mod => mod.trim()).forEach(f => {
-        imports[f] = { 'function_called_in': file_name, 'function_defined_in': 'Lib' }
+    //console.log(match)
+    if (match[1] && match[2]) {
+      const file_key_source = match[1].trim()
+      match[2].split(',').map(i => i.trim()).filter(Boolean).forEach((named) => {
+        const function_key = file_key_source + '-' + named
+        if (function_key in matches) {
+          matches[function_key].add(
+            {
+              'file_key_source': file_key_source,
+              'file_key_target': file_key_target,
+              'function_name': named,
+            }
+          )
+        } else {
+          matches[function_key] = new Set([
+            {
+              'file_key_source': file_key_source,
+              'file_key_target': file_key_target,
+              'function_name': named,
+            }
+          ])
+        }
       })
-
-    } else if (match[2] && match[3]) {
-      // For 'from module import elements'
-
-      match[3].split(',').map(element => element.trim()).forEach(f => {
-        imports[f] = { 'function_called_in': file_name, 'function_defined_in': match[2] }
+    } else if (match[3]) {
+      match[3].split(',').map(i => i.trim()).filter(Boolean).forEach((named) => {
+        const function_key = 'Lib' + '-' + named
+        if (function_key in matches) {
+          matches[function_key].add(
+            {
+              'file_key_source': 'Lib',
+              'file_key_target': file_key_target,
+              'function_name': named,
+            }
+          )
+        } else {
+          matches[function_key] = new Set([
+            {
+              'file_key_source': 'Lib',
+              'file_key_target': file_key_target,
+              'function_name': named,
+            }
+          ])
+        }
       })
-
     }
   }
 
-  return imports
+  return matches
 }
 
 /*
-const code = `
 def add(a, b):
     return a + b
 
@@ -49,132 +77,135 @@ class MyClass:
 
 def no_params():
     pass
-`;
 */
-// matches[match[2]] = { 'file_name': file_name, 'function_parameters': match[3] }
-/*
-export const getFunctionDefinition = (file_name, code) => {
-  const functions = {};
-  let match;
-
-  const functionRegex = /def\s+(\w+)\s*\(([^)]*)\)\s*:/g
-
-  while ((match = functionRegex.exec(code)) !== null) {
-    const functionName = match[1]; // Function name
-    const parameters = match[2] ? match[2].split(',').map(param => param.trim()) : []; // Function parameters
-
-    functions[functionName] = { 'file_name': file_name, 'function_parameters': parameters }
-  }
-
-  return functions
-}
-*/
-
 export const getFileToFunctions = (file_name, code) => {
   const matches = {};
   let match;
 
-  const regex = /def\s+(\w+)\s*\(([^)]*)\)\s*:/g
+  const regex = /def\s+(.+)\((.*)\):/g
 
   while ((match = regex.exec(code)) !== null) {
-    const functionName = match[1]; // Function name
-    const parameters = match[2] || ''; // Function parameters
-
-    if (file_name in matches) {
-      matches[file_name].add(`${functionName}(${parameters}`)
+    if (match[1]) {
+      if (file_name in matches) {
+        matches[file_name].add(
+          {
+            'function_name': match[1],
+            'function_parameters': match[2] || '',
+          }
+        )
+      } else {
+        matches[file_name] = new Set([
+          {
+            'function_name': match[1],
+            'function_parameters': match[2] || '',
+          }
+        ])
+      }
     }
-
   }
 
   return matches;
 }
 
 
-const getFunctionsDefined = (code) => {
-  const functions = []
-  let match;
 
-  const functionRegex = /def\s+(\w+)\s*\(([^)]*)\)\s*:/g
+const getWholeFunction = (match, def, code) => {
+  // console.log(match.index, def.length)
+  if (!match) {
+      return ''; // No match for function declaration
+  }
+
+  
+  let preDefStart = match.index
+  while (0 <= preDefStart - 1 && (code[preDefStart - 1] === ' ' || code[preDefStart - 1] === '\t')) {
+    preDefStart--
+  }
+
+  //console.log('[' + code.substring(preDefStart, match.index) + ']')
+  let index = match.index
+  while (index < code.length) {
+    let tmpLeft = code.indexOf('\n', index)
+    if (tmpLeft === -1) {
+      break
+    }
+
+    tmpLeft++
+    let tmpRight = tmpLeft
+    while (tmpRight < code.length && (code[tmpRight] === ' ' || code[tmpRight] === '\t')) {
+      tmpRight++
+    }
+
+    //console.log('{' + code.substring(tmpLeft, tmpRight) + '}')
+
+    if (tmpRight - tmpLeft === match.index - preDefStart || tmpLeft === tmpRight) {
+      return code.substring(match.index, tmpLeft)
+    }
+
+    index = tmpRight + 1
+  }
+  
+  return code.substring(match.index)
+}
+
+
+export const getFunctionLinks = (file_name, code) => {
+  const functionRegex = /def\s+(.+)\((.*)\):/g
+
+  const functionLinks = {}
+  let match
+
 
   while ((match = functionRegex.exec(code)) !== null) {
-    const functionName = match[1]; // Function name
-    const parameters = match[2] ? match[2].split(',').map(param => param.trim()) : []; // Function parameters
+      let functionName
+      let tmp
 
-    functions.push(functionName)
+      if (match[1]) {
+        functionName = match[1]
+        tmp = getWholeFunction(match, match[1], code)
+        // console.log(functionName, tmp)
+      }
+
+
+      const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
+
+
+      if (functionName && tmp) {
+          const functions_defined = getFileToFunctions(file_name, code)
+
+          Object.keys(functions_defined).forEach((fn) => {
+              functions_defined[fn].forEach((item) => {
+                  if (tmp.includes(item.function_name) && functionName !== item.function_name) {
+                      const functionNameKey = file_key + '-' + functionName
+                  if (functionNameKey in functionLinks) {
+                      functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
+                  } else {
+                      functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
+                  }
+                  }
+              })
+          })
+
+          const functions_imported = getImportDefinition(file_name, code)
+
+          Object.keys(functions_imported).forEach((function_key) => {
+              Array.from(functions_imported[function_key]).forEach((item) => {
+                  if (tmp.includes(item.function_name) && functionName !== item.function_name) {
+                      const functionNameKey = file_key + '-' + functionName
+                      if (functionNameKey in functionLinks) {
+                          functionLinks[functionNameKey].add(
+                              item.file_key_source + '-' + item.function_name
+                          )
+                      } else {
+                          functionLinks[functionNameKey] = new Set([
+                              item.file_key_source + '-' + item.function_name
+                          ])
+                      }
+                  }
+              })
+          })
+      }
   }
 
-  return functions
-}
-
-const getFunctionsImported = (code) => {
-  const importRegex = /(?:import\s+([\w.,\s]+))|(?:from\s+([\w.]+)\s+import\s+([\w.,\s]+))/g
-
-  const imports = []
-  let match;
-
-  // matches[match.groups.namespace] = { 'function_called_in': file_name, 'function_defined_in': match.groups.module }
-  while ((match = importRegex.exec(code)) !== null) {
-    if (match[1]) {
-      // For 'import module'
-
-      match[1].split(',').map(mod => mod.trim()).forEach(f => {
-        imports.push(f)
-      })
-
-    } else if (match[2] && match[3]) {
-      // For 'from module import elements'
-
-      match[3].split(',').map(element => element.trim()).forEach(f => {
-        imports.push(f)
-      })
-
-    }
-  }
-
-  return imports
-}
-
-/*
-const code = `
-def add(a, b):
-    return a + b
-
-def subtract(a, b):
-    result = a - b
-    return result
-
-class MyClass:
-    def my_method(self):
-        print("Hello from method")
-
-def no_params():
-    pass
-`;
-*/
-export const getFunctionLinks = (file_name, code) => {
-    const functionRegex = /def\s+(\w+)\s*\([^)]*\)\s*:(\n\s+[^\n]+)*/g
-
-    const functionLinks = []
-    let match
-
-    const functions_defined = getFunctionsDefined(code)
-    const functions_imported = getFunctionsImported(code)
-
-    while ((match = functionRegex.exec(code)) !== null) {
-        [...functions_defined, ...functions_imported].forEach((f) => {
-            if (match[0].includes(f)) {
-                const endIndex = match.index + match[0].length
-                const functionName = match[1]
-                if (functionName && functionName != f) {
-                    functionLinks.push({
-                        'source': f,
-                        'target': functionName,
-                    })
-                }
-            }
-        })
-    }
-
-    // console.log('functionLinks', functionLinks)
-    return functionLinks
+  // console.log('functionLinks', functionLinks)
+  return functionLinks
 }

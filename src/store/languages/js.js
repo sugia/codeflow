@@ -113,46 +113,6 @@ export const getFileToFunctions = (file_name, code) => {
 }
 
 
-
-
-const getFunctionsDefined = (file_name, code) => {
-    const matches = []
-    let match
-    const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
-    const regex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g
-
-    while ((match = regex.exec(code)) !== null) {
-
-        if (match[2]) {
-            // Function Declaration
-            let item = {
-                'file_key': file_key,
-                'function_name': match[2],
-            }
-            matches.push(item)
-        } else if (match[5]) {
-            // Function Expression
-            let item = {
-                'file_key': file_key,
-                'function_name': match[5],
-            }
-            matches.push(item)
-        } else if (match[8]) {
-            // Arrow Function
-            let item = {
-                'file_key': file_key,
-                'function_name': match[8],
-            }
-            matches.push(item)
-        }
-
-
-    }
-
-    return matches
-}
-
-
 /*
 const jsCode = `
   import React from 'react';
@@ -250,23 +210,32 @@ export const getFunctionLinks = (file_name, code) => {
 
         const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
 
-        const functions_defined = getFunctionsDefined(file_name, code)
-        const functions_imported = getImportDefinition(file_name, code)
-    
+
         //console.log(functions_imported)
         //console.log(functionName, tmp)
 
         if (functionName && tmp) {
-            functions_defined.forEach((item) => {
-                if (tmp.includes(item.function_name) && functionName !== item.function_name) {
-                    const functionNameKey = file_key + '-' + functionName
-                    if (functionNameKey in functionLinks) {
-                        functionLinks[functionNameKey].add(item.file_key + '-' + item.function_name)
-                    } else {
-                        functionLinks[functionNameKey] = new Set([item.file_key + '-' + item.function_name])
+            const functions_defined = getFileToFunctions(file_name, code)
+
+            Object.keys(functions_defined).forEach((fn) => {
+                functions_defined[fn].forEach((item) => {
+                    if ((tmp.includes(item.function_name + '.') ||
+                        tmp.includes(item.function_name + '!.') ||
+                        tmp.includes(item.function_name + '?.') ||
+                        tmp.includes(item.function_name + '(') ||
+                        tmp.includes(item.function_name + '[')
+                    ) && functionName !== item.function_name) {
+                        const functionNameKey = file_key + '-' + functionName
+                        if (functionNameKey in functionLinks) {
+                            functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
+                        } else {
+                            functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
+                        }
                     }
-                }
+                })
             })
+
+            const functions_imported = getImportDefinition(file_name, code)
 
             Object.keys(functions_imported).forEach((function_key) => {
                 Array.from(functions_imported[function_key]).forEach((item) => {

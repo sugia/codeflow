@@ -5,17 +5,15 @@ import { render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
 test('js.getImportDefinition', () => {
-    const jsFileName = 'Test.js'
-    const jsImports = `
+    const fileName = 'Test.js'
+    const code = `
         import React from 'react'
         import { useState, useEffect } from 'react'
         import * as Utils from './utils'
         import './styles.css'
         import defaultExport, { namedExport1, namedExport2 } from './module'
     `
-    const res = js.getImportDefinition(jsFileName, jsImports)
-
-    expect(typeof res).toBe('object')
+    const res = js.getImportDefinition(fileName, code)
 
     expect(res).toEqual({
         "module-defaultExport": new Set([
@@ -43,8 +41,8 @@ test('js.getImportDefinition', () => {
 })
 
 test('js.getFileToFunctions', () => {
-    const jsFileName = 'Test.js'
-    const jsFunctions = `
+    const fileName = 'Test.js'
+    const code = `
     function add(a, b) {
         if (a > b) {
             return a;
@@ -71,7 +69,7 @@ test('js.getFileToFunctions', () => {
     }
     `
 
-    const res = js.getFileToFunctions(jsFileName, jsFunctions)
+    const res = js.getFileToFunctions(fileName, code)
 
     expect(res).toEqual({
         "Test.js": new Set([
@@ -93,8 +91,8 @@ test('js.getFileToFunctions', () => {
 
 
 test('/js.getFunctionLinks', () => {
-    const jsFileName = 'Test.js'
-    const jsCode = `
+    const fileName = 'Test.js'
+    const code = `
         import Example from './Example'
         import { useX, useY } from 'xy'
         import * as Utils from './utils'
@@ -120,7 +118,7 @@ test('/js.getFunctionLinks', () => {
         }
     `
 
-    const res = js.getFunctionLinks(jsFileName, jsCode)
+    const res = js.getFunctionLinks(fileName, code)
 
     expect(res).toEqual({
         "Test-add": new Set([
