@@ -82,24 +82,24 @@ export const getFileToFunctions = (file_name, code) => {
 
     const regex_with_receiver = /func\s*\(([\s\w\*]*)\)\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
 
-    while ((match = regex.exec(code)) !== null) {
+    while ((match = regex_with_receiver.exec(code)) !== null) {
         matches[file_name].add(
             {
                 'function_name': match[2],
                 'function_parameters': match[3],
-                'return_type': match[4].trim(),
+                'return_type': match[4].trim() || null,
                 'receiver': match[1],
             }
         )
     }
 
     const regex_without_receiver = /func\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
-    while ((match = regex.exec(code)) !== null) {
+    while ((match = regex_without_receiver.exec(code)) !== null) {
         matches[file_name].add(
             {
                 'function_name': match[1],
                 'function_parameters': match[2],
-                'return_type': match[3].trim(),
+                'return_type': match[3].trim() || null,
             }
         )
     }

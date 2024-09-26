@@ -88,8 +88,9 @@ test('go.getFileToFunctions', () => {
             },
             {
                 "function_name": "multiply",
-                "function_parameters": "r *Receiver",
+                "function_parameters": "x int, y int",
                 "return_type": "int",
+                "receiver": "r *Receiver",
             },
             {
                 "function_name": "sayHello",
