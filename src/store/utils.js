@@ -1,5 +1,9 @@
 import * as js from './languages/js'
 import * as py from './languages/py'
+import * as go from './languages/go'
+import * as rust from './languages/rust'
+import * as java from './languages/java'
+import * as csharp from './languages/csharp'
 
 /*
     getImportDefinition(file_name, code)
@@ -43,28 +47,24 @@ export const languageMap = {
     '.tsx': js,
 
     '.py': py,
+
+    //todo regular expressions
+    '.go': go,
+    '.rs': rust,
+    '.java': java,
+
+    '.cs': csharp,
 }
+
 /*
 export const languageMap = {
-    '.js': 'JavaScript',
-    '.jsx': 'JavaScript (React)',
-    '.ts': 'TypeScript',
-    '.tsx': 'TypeScript (React),
-
-    '.py': 'Python',
-
-
-    '.go': 'Golang',
-
-    '.java': 'Java',
-    '.cpp': 'C++',
+     '.cpp': 'C++',
     '.c': 'C',
-    '.cs': 'C#',
+
 
     '.php': 'PHP',
 
     '.rb': 'Ruby',
-    '.rs': 'Rust',
 
     '.swift': 'Swift',
     '.kt': 'Kotlin',
@@ -79,11 +79,5 @@ export const languageMap = {
 
     '.erl': 'Erlang',
     '.hrl': 'Erlang Header File',
-
-    '.html': 'HTML',
-    '.css': 'CSS',
-    '.json': 'JSON',
-    '.md': 'Markdown',
-    // Add more extensions and languages as needed
 }
 */

@@ -78,7 +78,7 @@ test('py.getFileToFunctions', () => {
 })
 
 
-test('/py.getFunctionLinks', () => {
+test('py.getFunctionLinks', () => {
     const fileName = 'test.py'
     const code = `
         import os

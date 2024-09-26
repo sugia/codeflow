@@ -90,7 +90,7 @@ test('js.getFileToFunctions', () => {
 })
 
 
-test('/js.getFunctionLinks', () => {
+test('js.getFunctionLinks', () => {
     const fileName = 'Test.js'
     const code = `
         import Example from './Example'
