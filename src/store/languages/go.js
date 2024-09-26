@@ -1,15 +1,72 @@
 export const getImportDefinition = (file_name, code) => {
-    const importRegex = /.*/g
 
     const matches = {}
     let match
 
     const file_key_target = file_name.slice(0, file_name.lastIndexOf('.'))
-    // function_name: 
-    while ((match = importRegex.exec(code)) !== null) {
 
 
+    const regex_without_bracket = /import\s*([\w_.]*)\s*\"(.*)\"/g
+    while ((match = regex_without_bracket.exec(code)) !== null) {
+        const file_key_source = match[2].slice(match[2].lastIndexOf('/') + 1)
+        const function_key = file_key_source + '-' + file_key_source
+
+        if (!(function_key in matches)) {
+            matches[function_key] = new Set([])
+        }
+        let item = {
+            'file_key_source': file_key_source,
+            'file_key_target': file_key_target,
+            'function_name': file_key_source,
+        }
+        if (match[1]) {
+            item['function_alias'] = match[1]
+        }
+        matches[function_key].add(item)
     }
+
+    const regex_with_bracket = /import\s*\(\s*(([\w_.]*)\s*\"(.*)\"\s*)+\)/g
+    while ((match = regex_with_bracket.exec(code)) !== null) {
+        match[0].split('\n').map(i => i.trim()).filter(Boolean).forEach((row) => {
+            if (row.includes('import')) {
+                return
+            }
+            let function_name = ''
+            let function_alias = null
+
+            if (row.includes(' ')) {
+                const tmp = row.split(' ').map(i => i.trim()).filter(Boolean)
+
+                function_name = tmp[1].replace(/"/g, '')
+                function_name = function_name.slice(function_name.lastIndexOf('/') + 1)
+                function_alias = tmp[0]
+
+            } else {
+                function_name = row.replace(/"/g, '')
+                function_name = function_name.slice(function_name.lastIndexOf('/') + 1)
+            }
+
+            const file_key_source = function_name
+            if (file_key_source === ')') {
+                return
+            }
+            const function_key = function_name + '-' + function_name
+
+            if (!(function_key in matches)) {
+                matches[function_key] = new Set([])
+            }
+            let item = {
+                'file_key_source': file_key_source,
+                'file_key_target': file_key_target,
+                'function_name': function_name,
+            }
+            if (function_alias) {
+                item['function_alias'] = function_alias
+            }
+            matches[function_key].add(item)
+        })
+    }
+
 
     return matches
 }

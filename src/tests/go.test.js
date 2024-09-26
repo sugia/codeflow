@@ -12,6 +12,8 @@ test('go.getImportDefinition', () => {
             "bytes"
         )
 
+        import "something/random"
+
         import dg "github.com/bwmarrin/discordgo"
 
         import (
@@ -20,7 +22,6 @@ test('go.getImportDefinition', () => {
 
         import (
             . "math"
-            "fmt"
         )
 
         import (
@@ -36,6 +37,9 @@ test('go.getImportDefinition', () => {
         ]),
         "bytes-bytes": new Set([
             { "file_key_source": "bytes", "file_key_target": "test", "function_name": "bytes" }
+        ]),
+        "random-random": new Set([
+            { "file_key_source": "random", "file_key_target": "test", "function_name": "random" }
         ]),
         "discordgo-discordgo": new Set([
             { "file_key_source": "discordgo", "file_key_target": "test", "function_name": "discordgo", "function_alias": "dg" }
