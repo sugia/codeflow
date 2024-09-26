@@ -1,10 +1,10 @@
-import * as py from '../store/languages/py'
+import * as python from '../store/languages/python'
 
 import React from 'react'
 import { render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-test('py.getImportDefinition', () => {
+test('python.getImportDefinition', () => {
     const fileName = 'test.py'
     const code = `
         import os
@@ -12,7 +12,7 @@ test('py.getImportDefinition', () => {
         from collections import defaultdict, Counter
         from mymodule import myfunc
     `
-    const res = py.getImportDefinition(fileName, code)
+    const res = python.getImportDefinition(fileName, code)
 
     expect(res).toEqual({
         "Lib-os": new Set([
@@ -36,7 +36,7 @@ test('py.getImportDefinition', () => {
     })
 })
 
-test('py.getFileToFunctions', () => {
+test('python.getFileToFunctions', () => {
     const fileName = 'test.py'
     const code = `
         def add(a, b):
@@ -53,7 +53,7 @@ test('py.getFileToFunctions', () => {
             pass
     `
 
-    const res = py.getFileToFunctions(fileName, code)
+    const res = python.getFileToFunctions(fileName, code)
 
     expect(res).toEqual({
         "test.py": new Set([
@@ -78,7 +78,7 @@ test('py.getFileToFunctions', () => {
 })
 
 
-test('py.getFunctionLinks', () => {
+test('python.getFunctionLinks', () => {
     const fileName = 'test.py'
     const code = `
         import os
@@ -105,7 +105,7 @@ test('py.getFunctionLinks', () => {
             pass
     `
 
-    const res = py.getFunctionLinks(fileName, code)
+    const res = python.getFunctionLinks(fileName, code)
 
     expect(res).toEqual({
         "test-add": new Set([

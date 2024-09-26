@@ -175,12 +175,8 @@ export const getFunctionLinks = (file_name, code) => {
 
                 Object.keys(functions_defined).forEach((fn) => {
                     functions_defined[fn].forEach((item) => {
-                        if ((tmp.includes(item.function_name + '.') ||
-                            tmp.includes(item.function_name + '!.') ||
-                            tmp.includes(item.function_name + '?.') ||
-                            tmp.includes(item.function_name + '(') ||
-                            tmp.includes(item.function_name + '[')
-                        ) && functionName !== item.function_name) {
+                        if (tmp.includes(item.function_name)
+                            && functionName !== item.function_name) {
                             const functionNameKey = file_key + '-' + functionName
                             if (functionNameKey in functionLinks) {
                                 functionLinks[functionNameKey].add(file_key + '-' + item.function_name)

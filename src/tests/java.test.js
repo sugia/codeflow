@@ -12,7 +12,7 @@ test('java.getImportDefinition', () => {
         import java.util.*;
         import com.example.MyClass;
     `
-    const res = py.getImportDefinition(fileName, code)
+    const res = java.getImportDefinition(fileName, code)
 
     expect(res).toEqual({
         "util-List": new Set([
@@ -64,7 +64,7 @@ test('java.getFileToFunctions', () => {
             },
             {
                 "function_name": "doSomething",
-                "function_parameters": "self",
+                "function_parameters": "",
                 "return_type": "void",
             },
         ])
@@ -98,7 +98,7 @@ test('java.getFunctionLinks', () => {
         }
     `
 
-    const res = py.getFunctionLinks(fileName, code)
+    const res = java.getFunctionLinks(fileName, code)
 
     expect(res).toEqual({
         "test-add": new Set([

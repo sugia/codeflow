@@ -1,5 +1,5 @@
-import * as js from './languages/js'
-import * as py from './languages/py'
+import * as javascript from './languages/javascript'
+import * as python from './languages/python'
 import * as go from './languages/go'
 import * as rust from './languages/rust'
 import * as java from './languages/java'
@@ -41,15 +41,17 @@ import * as csharp from './languages/csharp'
 */
 
 export const languageMap = {
-    '.js': js,
-    '.jsx': js,
-    '.ts': js,
-    '.tsx': js,
+    '.js': javascript,
+    '.jsx': javascript,
+    '.ts': javascript,
+    '.tsx': javascript,
 
-    '.py': py,
+    '.py': python,
+
+
+    '.go': go, // todo: files in the same package can call each other's functions without explicitly importing each other
 
     //todo regular expressions
-    '.go': go,
     '.rs': rust,
     '.java': java,
 

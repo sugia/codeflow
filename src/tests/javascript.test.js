@@ -1,10 +1,10 @@
-import * as js from '../store/languages/js'
+import * as javascript from '../store/languages/javascript'
 
 import React from 'react'
 import { render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/extend-expect'
 
-test('js.getImportDefinition', () => {
+test('javascript.getImportDefinition', () => {
     const fileName = 'Test.js'
     const code = `
         import React from 'react'
@@ -13,7 +13,7 @@ test('js.getImportDefinition', () => {
         import './styles.css'
         import defaultExport, { namedExport1, namedExport2 } from './module'
     `
-    const res = js.getImportDefinition(fileName, code)
+    const res = javascript.getImportDefinition(fileName, code)
 
     expect(res).toEqual({
         "module-defaultExport": new Set([
@@ -40,7 +40,7 @@ test('js.getImportDefinition', () => {
     })
 })
 
-test('js.getFileToFunctions', () => {
+test('javascript.getFileToFunctions', () => {
     const fileName = 'Test.js'
     const code = `
     function add(a, b) {
@@ -69,7 +69,7 @@ test('js.getFileToFunctions', () => {
     }
     `
 
-    const res = js.getFileToFunctions(fileName, code)
+    const res = javascript.getFileToFunctions(fileName, code)
 
     expect(res).toEqual({
         "Test.js": new Set([
@@ -90,7 +90,7 @@ test('js.getFileToFunctions', () => {
 })
 
 
-test('js.getFunctionLinks', () => {
+test('javascript.getFunctionLinks', () => {
     const fileName = 'Test.js'
     const code = `
         import Example from './Example'
@@ -118,7 +118,7 @@ test('js.getFunctionLinks', () => {
         }
     `
 
-    const res = js.getFunctionLinks(fileName, code)
+    const res = javascript.getFunctionLinks(fileName, code)
 
     expect(res).toEqual({
         "Test-add": new Set([
