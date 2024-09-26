@@ -74,14 +74,35 @@ export const getImportDefinition = (file_name, code) => {
 
 export const getFileToFunctions = (file_name, code) => {
     const matches = {}
-    let match;
+    let match
 
-    const regex = /.*/g
-
-    while ((match = regex.exec(code)) !== null) {
-
+    if (!(file_name in matches)) {
+        matches[file_name] = new Set([])
     }
 
+    const regex_with_receiver = /func\s*\(([\s\w\*]*)\)\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
+
+    while ((match = regex.exec(code)) !== null) {
+        matches[file_name].add(
+            {
+                'function_name': match[2],
+                'function_parameters': match[3],
+                'return_type': match[4].trim(),
+                'receiver': match[1],
+            }
+        )
+    }
+
+    const regex_without_receiver = /func\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
+    while ((match = regex.exec(code)) !== null) {
+        matches[file_name].add(
+            {
+                'function_name': match[1],
+                'function_parameters': match[2],
+                'return_type': match[3].trim(),
+            }
+        )
+    }
 
     return matches
 }
