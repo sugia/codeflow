@@ -81,7 +81,6 @@ export const getFileToFunctions = (file_name, code) => {
     }
 
     const regex_with_receiver = /func\s*\(([\s\w\*]*)\)\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
-
     while ((match = regex_with_receiver.exec(code)) !== null) {
         matches[file_name].add(
             {
@@ -143,77 +142,76 @@ const getWholeFunction = (match, def, code) => {
 }
 
 export const getFunctionLinks = (file_name, code) => {
-    const functionRegex = /(function\s+([a-zA-Z_$][0-9a-zA-Z_$]*)\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*function\s*\(([^)]*)\)\s*\{)|(([a-zA-Z_$][0-9a-zA-Z_$]*)\s*=\s*\(([^)]*)\)\s*=>\s*\{)/g
+    const regex_with_receiver = /func\s*\(([\s\w\*]*)\)\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
+    const regex_without_receiver = /func\s*([\w]+)\(([\w\s,]*)\)\s*([\w\s,]*)\{/g
 
     const functionLinks = {}
     let match
 
+    [regex_with_receiver, regex_without_receiver].forEach((regex) => {
 
-    while ((match = functionRegex.exec(code)) !== null) {
-        let functionName
-        let tmp
-
-
-        //console.log('~~~~~~~~~~')
-        if (match[2]) {
-            functionName = match[2]
-            tmp = getWholeFunction(match, match[2], code)
-        } else if (match[5]) {
-            functionName = match[5]
-            tmp = getWholeFunction(match, match[5], code)
-        } else if (match[8]) {
-            functionName = match[8]
-            tmp = getWholeFunction(match, match[8], code)
-        }
+        while ((match = regex.exec(code)) !== null) {
+            let functionName
+            let tmp
 
 
-        const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
+            if (regex === regex_with_receiver) {
+                functionName = match[2]
+                tmp = getWholeFunction(match, match[2], code)
+            } else {
+                functionName = match[1]
+                tmp = getWholeFunction(match, match[1], code)
+            }
 
 
-        //console.log(functions_imported)
-        //console.log(functionName, tmp)
+            const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
 
-        if (functionName && tmp) {
-            const functions_defined = getFileToFunctions(file_name, code)
 
-            Object.keys(functions_defined).forEach((fn) => {
-                functions_defined[fn].forEach((item) => {
-                    if ((tmp.includes(item.function_name + '.') ||
-                        tmp.includes(item.function_name + '!.') ||
-                        tmp.includes(item.function_name + '?.') ||
-                        tmp.includes(item.function_name + '(') ||
-                        tmp.includes(item.function_name + '[')
-                    ) && functionName !== item.function_name) {
-                        const functionNameKey = file_key + '-' + functionName
-                        if (functionNameKey in functionLinks) {
-                            functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
-                        } else {
-                            functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
+            //console.log(functions_imported)
+            //console.log(functionName, tmp)
+
+            if (functionName && tmp) {
+                const functions_defined = getFileToFunctions(file_name, code)
+
+                Object.keys(functions_defined).forEach((fn) => {
+                    functions_defined[fn].forEach((item) => {
+                        if ((tmp.includes(item.function_name + '.') ||
+                            tmp.includes(item.function_name + '!.') ||
+                            tmp.includes(item.function_name + '?.') ||
+                            tmp.includes(item.function_name + '(') ||
+                            tmp.includes(item.function_name + '[')
+                        ) && functionName !== item.function_name) {
+                            const functionNameKey = file_key + '-' + functionName
+                            if (functionNameKey in functionLinks) {
+                                functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
+                            } else {
+                                functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
+                            }
                         }
-                    }
+                    })
                 })
-            })
 
-            const functions_imported = getImportDefinition(file_name, code)
+                const functions_imported = getImportDefinition(file_name, code)
 
-            Object.keys(functions_imported).forEach((function_key) => {
-                Array.from(functions_imported[function_key]).forEach((item) => {
-                    if (tmp.includes(item.function_name) && functionName !== item.function_name) {
-                        const functionNameKey = file_key + '-' + functionName
-                        if (functionNameKey in functionLinks) {
-                            functionLinks[functionNameKey].add(
-                                item.file_key_source + '-' + item.function_name
-                            )
-                        } else {
-                            functionLinks[functionNameKey] = new Set([
-                                item.file_key_source + '-' + item.function_name
-                            ])
+                Object.keys(functions_imported).forEach((function_key) => {
+                    Array.from(functions_imported[function_key]).forEach((item) => {
+                        if (tmp.includes(item.function_name) && functionName !== item.function_name) {
+                            const functionNameKey = file_key + '-' + functionName
+                            if (functionNameKey in functionLinks) {
+                                functionLinks[functionNameKey].add(
+                                    item.file_key_source + '-' + item.function_name
+                                )
+                            } else {
+                                functionLinks[functionNameKey] = new Set([
+                                    item.file_key_source + '-' + item.function_name
+                                ])
+                            }
                         }
-                    }
+                    })
                 })
-            })
+            }
         }
-    }
+    })
 
     // console.log('functionLinks', functionLinks)
     return functionLinks

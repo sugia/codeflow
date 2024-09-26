@@ -118,7 +118,6 @@ test('go.getFunctionLinks', () => {
 
         import (
             . "math"
-            "fmt"
         )
 
         import (
@@ -155,6 +154,7 @@ test('go.getFunctionLinks', () => {
         ]),
         "test-sayHello": new Set([
             "sql-sql",
+            "fmt-fmt",
         ]),
     }
     )
