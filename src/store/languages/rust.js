@@ -210,7 +210,8 @@ export const getFunctionLinks = (file_name, code) => {
                         tmp.includes(match_key + '!.') ||
                         tmp.includes(match_key + '?.') ||
                         tmp.includes(match_key + '(') ||
-                        tmp.includes(match_key + '[')
+                        tmp.includes(match_key + '[') ||
+                        tmp.includes(match_key + '::')
                     ) && functionName !== item.function_name) {
                         const functionNameKey = file_key + '-' + functionName
                         if (functionNameKey in functionLinks) {
@@ -234,7 +235,8 @@ export const getFunctionLinks = (file_name, code) => {
                         tmp.includes(match_key + '!.') ||
                         tmp.includes(match_key + '?.') ||
                         tmp.includes(match_key + '(') ||
-                        tmp.includes(match_key + '[')
+                        tmp.includes(match_key + '[') ||
+                        tmp.includes(match_key + '::')
                     ) && functionName !== item.function_name) {
                         const functionNameKey = file_key + '-' + functionName
                         if (functionNameKey in functionLinks) {

@@ -53,9 +53,9 @@ export const languageMap = {
 
     //todo regular expressions
     '.rs': rust,
-    '.java': java,
+    '.java': java, // todo: import local file
 
-    '.cs': csharp,
+    '.cs': csharp, // todo: import local file
 }
 
 /*
