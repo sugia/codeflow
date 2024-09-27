@@ -239,7 +239,16 @@ export const getFunctionLinks = (file_name, code) => {
 
             Object.keys(functions_imported).forEach((function_key) => {
                 Array.from(functions_imported[function_key]).forEach((item) => {
-                    if (tmp.includes(item.function_name) && functionName !== item.function_name) {
+                    let match_key = item.function_name
+                    if (item.function_alias) {
+                        match_key = item.function_alias
+                    }
+                    if ((tmp.includes(match_key + '.') ||
+                        tmp.includes(match_key + '!.') ||
+                        tmp.includes(match_key + '?.') ||
+                        tmp.includes(match_key + '(') ||
+                        tmp.includes(match_key + '[')
+                    ) && functionName !== item.function_name) {
                         const functionNameKey = file_key + '-' + functionName
                         if (functionNameKey in functionLinks) {
                             functionLinks[functionNameKey].add(

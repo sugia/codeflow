@@ -126,7 +126,7 @@ test('go.getFunctionLinks', () => {
         )
 
         func add(a int, b int) int {
-            fmt.println("add")
+            x.println("add")
             return a + b
         }
 
@@ -139,7 +139,7 @@ test('go.getFunctionLinks', () => {
         // Function without return
         func sayHello(name string) {
             sql.updateHelloTimestamp()
-            fmt.Println("Hello", name)
+            x.Println("Hello", name)
         }
     `
 

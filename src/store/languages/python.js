@@ -112,10 +112,10 @@ export const getFileToFunctions = (file_name, code) => {
 const getWholeFunction = (match, def, code) => {
   // console.log(match.index, def.length)
   if (!match) {
-      return ''; // No match for function declaration
+    return ''; // No match for function declaration
   }
 
-  
+
   let preDefStart = match.index
   while (0 <= preDefStart - 1 && (code[preDefStart - 1] === ' ' || code[preDefStart - 1] === '\t')) {
     preDefStart--
@@ -143,7 +143,7 @@ const getWholeFunction = (match, def, code) => {
 
     index = tmpRight + 1
   }
-  
+
   return code.substring(match.index)
 }
 
@@ -156,54 +156,72 @@ export const getFunctionLinks = (file_name, code) => {
 
 
   while ((match = functionRegex.exec(code)) !== null) {
-      let functionName
-      let tmp
+    let functionName
+    let tmp
 
-      if (match[1]) {
-        functionName = match[1]
-        tmp = getWholeFunction(match, match[1], code)
-        // console.log(functionName, tmp)
-      }
-
-
-      const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
+    if (match[1]) {
+      functionName = match[1]
+      tmp = getWholeFunction(match, match[1], code)
+      // console.log(functionName, tmp)
+    }
 
 
-      if (functionName && tmp) {
-          const functions_defined = getFileToFunctions(file_name, code)
+    const file_key = file_name.slice(0, file_name.lastIndexOf('.'))
 
-          Object.keys(functions_defined).forEach((fn) => {
-              functions_defined[fn].forEach((item) => {
-                  if (tmp.includes(item.function_name) && functionName !== item.function_name) {
-                      const functionNameKey = file_key + '-' + functionName
-                  if (functionNameKey in functionLinks) {
-                      functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
-                  } else {
-                      functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
-                  }
-                  }
-              })
-          })
 
-          const functions_imported = getImportDefinition(file_name, code)
+    if (functionName && tmp) {
+      const functions_defined = getFileToFunctions(file_name, code)
 
-          Object.keys(functions_imported).forEach((function_key) => {
-              Array.from(functions_imported[function_key]).forEach((item) => {
-                  if (tmp.includes(item.function_name) && functionName !== item.function_name) {
-                      const functionNameKey = file_key + '-' + functionName
-                      if (functionNameKey in functionLinks) {
-                          functionLinks[functionNameKey].add(
-                              item.file_key_source + '-' + item.function_name
-                          )
-                      } else {
-                          functionLinks[functionNameKey] = new Set([
-                              item.file_key_source + '-' + item.function_name
-                          ])
-                      }
-                  }
-              })
-          })
-      }
+      Object.keys(functions_defined).forEach((fn) => {
+        functions_defined[fn].forEach((item) => {
+          let match_key = item.function_name
+          if (item.function_alias) {
+            match_key = item.function_alias
+          }
+          if ((tmp.includes(match_key + '.') ||
+            tmp.includes(match_key + '!.') ||
+            tmp.includes(match_key + '?.') ||
+            tmp.includes(match_key + '(') ||
+            tmp.includes(match_key + '[')
+          ) && functionName !== item.function_name) {
+            const functionNameKey = file_key + '-' + functionName
+            if (functionNameKey in functionLinks) {
+              functionLinks[functionNameKey].add(file_key + '-' + item.function_name)
+            } else {
+              functionLinks[functionNameKey] = new Set([file_key + '-' + item.function_name])
+            }
+          }
+        })
+      })
+
+      const functions_imported = getImportDefinition(file_name, code)
+
+      Object.keys(functions_imported).forEach((function_key) => {
+        Array.from(functions_imported[function_key]).forEach((item) => {
+          let match_key = item.function_name
+          if (item.function_alias) {
+            match_key = item.function_alias
+          }
+          if ((tmp.includes(match_key + '.') ||
+            tmp.includes(match_key + '!.') ||
+            tmp.includes(match_key + '?.') ||
+            tmp.includes(match_key + '(') ||
+            tmp.includes(match_key + '[')
+          ) && functionName !== item.function_name) {
+            const functionNameKey = file_key + '-' + functionName
+            if (functionNameKey in functionLinks) {
+              functionLinks[functionNameKey].add(
+                item.file_key_source + '-' + item.function_name
+              )
+            } else {
+              functionLinks[functionNameKey] = new Set([
+                item.file_key_source + '-' + item.function_name
+              ])
+            }
+          }
+        })
+      })
+    }
   }
 
   // console.log('functionLinks', functionLinks)

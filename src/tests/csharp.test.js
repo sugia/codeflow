@@ -98,7 +98,7 @@ test('csharp.getFunctionLinks', () => {
 
             protected virtual void DoSomething() {
                 // Method body
-                MyType()
+                MyAlias()
             }
         }
     `
