@@ -27,6 +27,15 @@ test('java.getImportDefinition', () => {
         "example-MyClass": new Set([
             { "file_key_source": "example", "file_key_target": "test", "function_name": "MyClass" }
         ]),
+        "List-List": new Set([
+            { "file_key_source": "List", "file_key_target": "test", "function_name": "List" }
+        ]),
+        "MyClass-MyClass": new Set([
+            { "file_key_source": "MyClass", "file_key_target": "test", "function_name": "MyClass" }
+        ]),
+        "PI-PI": new Set([
+            { "file_key_source": "PI", "file_key_target": "test", "function_name": "PI" }
+        ]),
     })
 })
 
@@ -77,6 +86,11 @@ test('java.getFileToFunctions', () => {
                 "function_parameters": "String[] args",
                 "return_type": "void",
             },
+            {
+                "function_name": "Example",
+                "function_parameters": "",
+                "return_type": "class",
+            },
         ])
     })
 })
@@ -118,15 +132,19 @@ test('java.getFunctionLinks', () => {
     expect(res).toEqual({
         "test-add": new Set([
             "util-List",
+            "List-List",
         ]),
         "test-greet": new Set([
             "Math-PI",
+            "PI-PI",
         ]),
         "test-doSomething": new Set([
             "example-MyClass",
+            "MyClass-MyClass",
         ]),
         "test-main": new Set([
             "utils-Helper",
+            "Helper-Helper",
         ])
     }
     )

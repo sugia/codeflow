@@ -190,6 +190,9 @@ function DesktopGraph() {
         })
 
 
+        //console.log('file_to_functions', state.file_to_functions)
+        //console.log('import_definition', state.import_definition)
+        //console.log('function_links', state.function_links)
         // console.log(vec)
         // console.log(tmp)
         setNodes(vec)

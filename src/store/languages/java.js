@@ -16,7 +16,7 @@ export const getImportDefinition = (file_name, code) => {
             if (last_dot_index === -1) {
                 function_file = match[2].slice(last_second_dot_index + 1)
             }
-            const function_key =  function_file + '-' + function_name
+            let function_key =  function_file + '-' + function_name
 
             if (!(function_key in matches)) {
                 matches[function_key] = new Set([])
@@ -29,6 +29,22 @@ export const getImportDefinition = (file_name, code) => {
                     'function_name': function_name,
                 }
             )
+
+            if (function_name !== '*') {
+                // file-file
+                function_key = function_name + '-' + function_name
+                if (!(function_key in matches)) {
+                    matches[function_key] = new Set([])
+                }
+
+                matches[function_key].add(
+                    {
+                        'file_key_source': function_name,
+                        'file_key_target': file_key_target,
+                        'function_name': function_name,
+                    }
+                )
+            }
         }
     }
 
@@ -57,6 +73,19 @@ export const getFileToFunctions = (file_name, code) => {
         }
     }
 
+    // get class names
+    const classRegex = /class\s+([\w]+)\s*\{/g
+    while ((match = classRegex.exec(code)) !== null) {
+        if (match[1]) {
+            matches[file_name].add(
+                {
+                    'function_name': match[1],
+                    'function_parameters': '',
+                    'return_type': 'class',
+                }
+            )
+        }
+    }
     return matches;
 }
 
