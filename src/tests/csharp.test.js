@@ -13,20 +13,23 @@ test('csharp.getImportDefinition', () => {
         using ProjectName = MyProject.Namespace;
         using MyAlias = MyNamespace.MyType;
     `
-    const res = py.getImportDefinition(fileName, code)
+    const res = csharp.getImportDefinition(fileName, code)
 
     expect(res).toEqual({
-        "util-List": new Set([
-            { "file_key_source": "util", "file_key_target": "test", "function_name": "List" }
+        "System-System": new Set([
+            { "file_key_source": "System", "file_key_target": "test", "function_name": "System" }
         ]),
-        "Math-PI": new Set([
-            { "file_key_source": "Math", "file_key_target": "test", "function_name": "PI" }
+        "Collections-Generic": new Set([
+            { "file_key_source": "Collections", "file_key_target": "test", "function_name": "Generic" }
         ]),
-        "util-*": new Set([
-            { "file_key_source": "util", "file_key_target": "test", "function_name": "*" }
+        "System-Math": new Set([
+            { "file_key_source": "System", "file_key_target": "test", "function_name": "Math" }
         ]),
-        "example-MyClass": new Set([
-            { "file_key_source": "example", "file_key_target": "test", "function_name": "MyClass" }
+        "MyProject-Namespace": new Set([
+            { "file_key_source": "MyProject", "file_key_target": "test", "function_name": "Namespace", "function_alias": "ProjectName" }
+        ]),
+        "MyNamespace-MyType": new Set([
+            { "file_key_source": "MyNamespace", "file_key_target": "test", "function_name": "MyType", "function_alias": "MyAlias" }
         ]),
     })
 })
@@ -52,7 +55,7 @@ test('csharp.getFileToFunctions', () => {
     const res = csharp.getFileToFunctions(fileName, code)
 
     expect(res).toEqual({
-        "test.csharp": new Set([
+        "test.cs": new Set([
             {
                 "function_name": "Add",
                 "function_parameters": "int a, int b",
@@ -100,7 +103,7 @@ test('csharp.getFunctionLinks', () => {
         }
     `
 
-    const res = py.getFunctionLinks(fileName, code)
+    const res = csharp.getFunctionLinks(fileName, code)
 
     expect(res).toEqual({
         "test-Add": new Set([

@@ -10,7 +10,7 @@ test('rust.getImportDefinition', () => {
         use std::io;
         use std::collections::HashMap as Map;
         use std::io::{self, Write};
-        use crate::my_module;
+        use create::my_module;
     `
     const res = rust.getImportDefinition(fileName, code)
 
@@ -91,7 +91,7 @@ test('rust.getFunctionLinks', () => {
         use std::io;
         use std::collections::HashMap as Map;
         use std::io::{self, Write};
-        use crate::my_module;
+        use create::my_module;
 
         fn add(a: i32, b: i32) -> i32 {
             io()

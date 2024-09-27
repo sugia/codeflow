@@ -12,7 +12,10 @@ export const getImportDefinition = (file_name, code) => {
             const last_dot_index = match[2].lastIndexOf('.')
             const last_second_dot_index = match[2].lastIndexOf('.', last_dot_index - 1)
             const function_name = match[2].slice(last_dot_index + 1)
-            const function_file = match[2].slice(last_second_dot_index + 1, last_dot_index)
+            let function_file = match[2].slice(last_second_dot_index + 1, last_dot_index)
+            if (last_dot_index === -1) {
+                function_file = match[2].slice(last_second_dot_index + 1)
+            }
             const function_key =  function_file + '-' + function_name
 
             if (!(function_key in matches)) {
