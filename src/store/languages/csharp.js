@@ -17,7 +17,7 @@ export const getImportDefinition = (file_name, code) => {
             if (last_dot_index === -1) {
                 function_file = match[3].slice(last_second_dot_index + 1)
             }
-            const function_key = function_file + '-' + function_name
+            let function_key = function_file + '-' + function_name
 
             const function_alias = match[2].slice(0, match[2].indexOf(' '))
 
@@ -33,6 +33,23 @@ export const getImportDefinition = (file_name, code) => {
                     'function_alias': function_alias,
                 }
             )
+
+            if (function_name !== '*' && function_name !== function_file) {
+                // file-file
+                function_key = function_name + '-' + function_name
+                if (!(function_key in matches)) {
+                    matches[function_key] = new Set([])
+                }
+
+                matches[function_key].add(
+                    {
+                        'file_key_source': function_name,
+                        'file_key_target': file_key_target,
+                        'function_name': function_name,
+                        'function_alias': function_alias,
+                    }
+                )
+            }
         }
     }
     
@@ -51,7 +68,7 @@ export const getImportDefinition = (file_name, code) => {
             if (last_dot_index === -1) {
                 function_file = match[2].slice(last_second_dot_index + 1)
             }
-            const function_key =  function_file + '-' + function_name
+            let function_key =  function_file + '-' + function_name
 
             if (!(function_key in matches)) {
                 matches[function_key] = new Set([])
@@ -64,6 +81,22 @@ export const getImportDefinition = (file_name, code) => {
                     'function_name': function_name,
                 }
             )
+
+            if (function_name !== '*' && function_name !== function_file) {
+                // file-file
+                function_key = function_name + '-' + function_name
+                if (!(function_key in matches)) {
+                    matches[function_key] = new Set([])
+                }
+
+                matches[function_key].add(
+                    {
+                        'file_key_source': function_name,
+                        'file_key_target': file_key_target,
+                        'function_name': function_name,
+                    }
+                )
+            }
         }
     }
 
@@ -87,6 +120,19 @@ export const getFileToFunctions = (file_name, code) => {
                     'function_name': match[4],
                     'function_parameters': match[5],
                     'return_type': match[3],
+                }
+            )
+        }
+    }
+    // get class names
+    const classRegex = /class\s+([\w]+)\s*\{/g
+    while ((match = classRegex.exec(code)) !== null) {
+        if (match[1]) {
+            matches[file_name].add(
+                {
+                    'function_name': match[1],
+                    'function_parameters': '',
+                    'return_type': 'class',
                 }
             )
         }

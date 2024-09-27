@@ -75,6 +75,17 @@ test('go.getFileToFunctions', () => {
         func sayHello(name string) {
             fmt.Println("Hello", name)
         }
+
+        type Person struct {
+            FirstName string
+            LastName  string
+            Age       int
+        }
+
+        type Animal struct {
+            Name   string
+            Species string
+        }
     `
 
     const res = go.getFileToFunctions(fileName, code)
@@ -96,6 +107,16 @@ test('go.getFileToFunctions', () => {
                 "function_name": "sayHello",
                 "function_parameters": "name string",
                 "return_type": null,
+            },
+            {
+                "function_name": "Person",
+                "function_parameters": "",
+                "return_type": "struct",
+            },
+            {
+                "function_name": "Animal",
+                "function_parameters": "",
+                "return_type": "struct",
             },
         ])
     })

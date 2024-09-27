@@ -23,6 +23,7 @@ export const getImportDefinition = (file_name, code) => {
             item['function_alias'] = match[1]
         }
         matches[function_key].add(item)
+
     }
 
     const regex_with_bracket = /import\s*\(\s*(([\w_.]*)\s*\"(.*)\"\s*)+\)/g
@@ -103,6 +104,16 @@ export const getFileToFunctions = (file_name, code) => {
         )
     }
 
+    const regex_class = /type\s+(\w+)\s+struct\s+\{/g
+    while ((match = regex_class.exec(code)) !== null) {
+        matches[file_name].add(
+            {
+                'function_name': match[1],
+                'function_parameters': "",
+                'return_type': "struct",
+            }
+        )
+    }
     return matches
 }
 

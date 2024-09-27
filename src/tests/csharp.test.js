@@ -31,6 +31,18 @@ test('csharp.getImportDefinition', () => {
         "MyNamespace-MyType": new Set([
             { "file_key_source": "MyNamespace", "file_key_target": "test", "function_name": "MyType", "function_alias": "MyAlias" }
         ]),
+        "Generic-Generic": new Set([
+            { "file_key_source": "Generic", "file_key_target": "test", "function_name": "Generic" }
+        ]),
+        "Math-Math": new Set([
+            { "file_key_source": "Math", "file_key_target": "test", "function_name": "Math" }
+        ]),
+        "MyType-MyType": new Set([
+            { "file_key_source": "MyType", "file_key_target": "test", "function_name": "MyType", "function_alias": "MyAlias" }
+        ]),
+        "Namespace-Namespace": new Set([
+            { "file_key_source": "Namespace", "file_key_target": "test", "function_name": "Namespace", "function_alias": "ProjectName" }
+        ]),
     })
 })
 
@@ -71,6 +83,11 @@ test('csharp.getFileToFunctions', () => {
                 "function_parameters": "",
                 "return_type": "void",
             },
+            {
+                "function_name": "Example",
+                "function_parameters": "",
+                "return_type": "class",
+            },
         ])
     })
 })
@@ -108,12 +125,15 @@ test('csharp.getFunctionLinks', () => {
     expect(res).toEqual({
         "test-Add": new Set([
             "Collections-Generic",
+            "Generic-Generic",
         ]),
         "test-Greet": new Set([
             "System-Math",
+            "Math-Math",
         ]),
         "test-DoSomething": new Set([
             "MyNamespace-MyType",
+            "MyType-MyType",
         ]),
     }
     )
