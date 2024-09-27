@@ -19,7 +19,7 @@
   "scripts": {
     "start": "REACT_APP_URI=http://localhost:3000 react-scripts start",
     "build": "DISABLE_ESLINT_PLUGIN=true GENERATE_SOURCEMAP=false REACT_APP_URI=https://codeflow.jomimi.com react-scripts build",
-    "test": "react-scripts test --watchAll=false",
+    "test": "react-scripts test --watchAll=true",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

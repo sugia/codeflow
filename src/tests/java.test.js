@@ -45,6 +45,11 @@ test('java.getFileToFunctions', () => {
             void doSomething() {
                 System.out.println("Doing something...");
             }
+            
+            public static void main(String[] args) {
+                Helper helper = new Helper();
+                helper.assist();
+            }
         }
     `
 
@@ -67,6 +72,11 @@ test('java.getFileToFunctions', () => {
                 "function_parameters": "",
                 "return_type": "void",
             },
+            {
+                "function_name": "main",
+                "function_parameters": "String[] args",
+                "return_type": "void",
+            },
         ])
     })
 })
@@ -79,6 +89,7 @@ test('java.getFunctionLinks', () => {
         import static java.lang.Math.PI;
         import java.util.*;
         import com.example.MyClass;
+        import com.example.utils.Helper;
 
         public class Example {
             public int add(int a, int b) {
@@ -95,6 +106,10 @@ test('java.getFunctionLinks', () => {
                 MyClass()
                 System.out.println("Doing something...");
             }
+            public static void main(String[] args) {
+                Helper helper = new Helper();
+                helper.assist();
+            }
         }
     `
 
@@ -110,6 +125,9 @@ test('java.getFunctionLinks', () => {
         "test-doSomething": new Set([
             "example-MyClass",
         ]),
+        "test-main": new Set([
+            "utils-Helper",
+        ])
     }
     )
 })

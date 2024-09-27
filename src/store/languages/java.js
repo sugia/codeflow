@@ -40,7 +40,7 @@ export const getFileToFunctions = (file_name, code) => {
     const matches = {};
     let match;
 
-    const regex = /(public|private|protected)?\s*(static)?\s*(\w+)\s*(\w+)\(([\w\s,]*)\)\s*\{/g
+    const regex = /(public|private|protected)?\s*(static)?\s*(\w+)\s*(\w+)\(([\w\s,\[\]]*)\)\s*\{/g
 
     if (!(file_name in matches)) {
         matches[file_name] = new Set([])
@@ -132,7 +132,7 @@ const getWholeFunction = (match, def, code) => {
 }
 
 export const getFunctionLinks = (file_name, code) => {
-    const functionRegex = /(public|private|protected)?\s*(static)?\s*(\w+)\s*(\w+)\(([\w\s,]*)\)\s*\{/g
+    const functionRegex = /(public|private|protected)?\s*(static)?\s*(\w+)\s*(\w+)\(([\w\s,\[\]]*)\)\s*\{/g
 
     const functionLinks = {}
     let match
@@ -181,7 +181,12 @@ export const getFunctionLinks = (file_name, code) => {
 
             Object.keys(functions_imported).forEach((function_key) => {
                 Array.from(functions_imported[function_key]).forEach((item) => {
-                    if (tmp.includes(item.function_name) && functionName !== item.function_name) {
+                    if ((tmp.includes(item.function_name + '.') ||
+                        tmp.includes(item.function_name + '!.') ||
+                        tmp.includes(item.function_name + '?.') ||
+                        tmp.includes(item.function_name + '(') ||
+                        tmp.includes(item.function_name + '[')
+                    ) && functionName !== item.function_name) {
                         const functionNameKey = file_key + '-' + functionName
                         if (functionNameKey in functionLinks) {
                             functionLinks[functionNameKey].add(
