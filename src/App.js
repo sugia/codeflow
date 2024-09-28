@@ -6,6 +6,7 @@ import DesktopLanding from './DesktopLanding'
 import MobileLanding from './MobileLanding'
 
 import DesktopGraph from './DesktopGraph'
+import MobileGraph from './MobileGraph'
 
 
 import {
@@ -32,6 +33,7 @@ function RouteElementsDesktop() {
 function RouteElementsMobile() {
   const routeElements = useRoutes([
     { path: '/', element: <MobileLanding /> },
+    { path: '/graph', element: <MobileGraph /> },
   ]);
   return routeElements
 }
