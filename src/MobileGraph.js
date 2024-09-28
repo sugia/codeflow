@@ -209,14 +209,13 @@ const MobileGraph = () => {
             {
                 Object.keys(state.file_to_functions).length === 0 ?
                     <Row justify='center' align='middle'
-                        style={{ 'height': '60vh', 'display': state.isOpenFileOrFolderVisible ? 'flex' : 'none' }}>
+                        style={{'display': state.isOpenFileOrFolderVisible ? 'flex' : 'none' }}>
 
-                        <Row style={{ 'height': '150px' }}></Row>
-                        <Upload.Dragger method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
+                        <Upload.Dragger style={{'marginTop': '100px'}} method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
 
                             loadFolder(info)
                         }}>
-                            <div style={{ 'width': '100%', 'height': '200px' }}>
+                            <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}>
                                 <p className="ant-upload-drag-icon">
                                     <FileSearchOutlined />
                                 </p>
@@ -227,12 +226,11 @@ const MobileGraph = () => {
                             </div>
                         </Upload.Dragger>
 
-                        <Row style={{ 'height': '20px' }}></Row>
-                        <Upload.Dragger method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                        <Upload.Dragger style={{'marginTop': '50px'}} method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
 
                             loadFolder(info)
                         }}>
-                            <div style={{ 'width': '100%', 'height': '200px' }}>
+                            <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}>
                                 <p className="ant-upload-drag-icon">
                                     <FolderOpenOutlined />
                                 </p>
