@@ -5,6 +5,13 @@ import * as rust from './languages/rust'
 import * as java from './languages/java'
 import * as csharp from './languages/csharp'
 
+import * as php from './languages/php'
+import * as ruby from './languages/ruby'
+
+import * as swift from './languages/swift'
+import * as kotlin from './languages/kotlin'
+
+
 /*
     getImportDefinition(file_name, code)
     return {
@@ -56,6 +63,13 @@ export const languageMap = {
     '.java': java, // todo: import local file
 
     '.cs': csharp, // todo: import local file
+
+    '.php': php,
+    '.rb': ruby,  // todo: function match prefix, example: utils matches another_utils
+
+    '.swift': swift, // todo: import local file
+    '.kt': kotlin,  // todo: function match prefix, example: List matches ArrayList
+    '.kts': kotlin,
 }
 
 /*
@@ -63,14 +77,6 @@ export const languageMap = {
      '.cpp': 'C++',
     '.c': 'C',
 
-
-    '.php': 'PHP',
-
-    '.rb': 'Ruby',
-
-    '.swift': 'Swift',
-    '.kt': 'Kotlin',
-    '.kts': 'Kotlin scripts',
 
     '.lua': 'Lua',
     '.dart': 'Dart',
