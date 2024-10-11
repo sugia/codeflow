@@ -247,6 +247,7 @@ const DesktopGraph = () => {
                                                 icon={
                                                     <DownloadOutlined style={{ 'color': 'gray' }} />
                                                 }
+                                                disabled={!state.isGraphVisible}
                                             >
                                             </Button>
 
