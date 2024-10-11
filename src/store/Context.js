@@ -234,8 +234,14 @@ export const initialState = {
     function_definition: {},
     file_to_functions: {},
     function_links: [],
-    rerenderGraph: false,
-    isOpenFileOrFolderVisible: true,
+    isUpdatingGraph: false,
+
+
+    isOpeningGraph: false,
+    graphFile: null,
+    isDownloadingGraph: false,
+
+    isGraphVisible: false,
 }
 
 

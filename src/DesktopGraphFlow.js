@@ -197,23 +197,89 @@ function DesktopGraph() {
         // console.log(tmp)
         setNodes(vec)
         setEdges(tmp)
+
+
     }
 
+
+
+    const loadGraph = (file) => {
+        setEdges([])
+
+        const reader = new FileReader()
+
+        reader.onload = (e) => {
+            const content = JSON.parse(e.target.result)
+            setNodes(content['nodes'])
+            setEdges(content['edges'])
+        }
+
+        reader.readAsText(file)
+    }
+
+
+
+    const downloadGraph = () => {
+        const content = { 'nodes': nodes, 'edges': edges }
+        const blob = new Blob([JSON.stringify(content, null, 2)], { type: 'application/json' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = 'codeflow.json'
+        link.click()
+        URL.revokeObjectURL(url)
+    }
+
+
     useEffect(() => {
-        if (state.rerenderGraph) {
+        if (state.isUpdatingGraph) {
 
             updateGraph()
 
             dispatch({
                 'value': {
-                    'rerenderGraph': false,
+                    'isUpdatingGraph': false,
+                    'isGraphVisible': true,
                 }
             })
         }
-    }, [state.rerenderGraph])
+    }, [state.isUpdatingGraph])
 
+
+    useEffect(() => {
+        //console.log('loadGraph')
+        if (!state.isOpeningGraph) {
+            return
+        }
+
+        loadGraph(state.graphFile)
+
+        dispatch({
+            'value': {
+                'isOpeningGraph': false,
+                'graphFile': null,
+                'isGraphVisible': true,
+            }
+        })
+    }, [state.isOpeningGraph])
+
+
+    useEffect(() => {
+        if (!state.isDownloadingGraph) {
+            return
+        }
+        downloadGraph()
+
+        dispatch({
+            'value': {
+                'isDownloadingGraph': false,
+            }
+        })
+
+    }, [state.isDownloadingGraph])
+
+    
     return (
-
         <ReactFlow
             nodes={nodes}
             edges={edges}
