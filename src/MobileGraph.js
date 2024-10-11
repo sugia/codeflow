@@ -26,6 +26,8 @@ import {
     FileTextOutlined,
     FileSearchOutlined,
     FileProtectOutlined,
+    ForkOutlined,
+    DownloadOutlined,
 } from '@ant-design/icons'
 
 import {
@@ -117,8 +119,8 @@ const MobileGraph = () => {
                     'import_definition': importDefinition,
                     'file_to_functions': fileToFunctions,
                     'function_links': functionLinks,
-                    'rerenderGraph': true,
-                    'isOpenFileOrFolderVisible': false,
+                    'isUpdatingGraph': true,
+                    'isGraphVisible': true,
                 }
             })
 
@@ -140,121 +142,175 @@ const MobileGraph = () => {
                     <Row justify='space-between' align='middle'
                         style={{ 'backgroundColor': 'white', 'width': '100%', 'height': '100%', 'padding': '0px 16px' }}>
 
-                            <Col>
-                                <Row justify='center' align='middle'>
-                                    <Col>
-                                        <Image width={32} height={32} preview={false} src={state.appLogo}></Image>
-                                    </Col>
-                                    <Col>
-                                        <Typography.Title level={4}
-                                            style={{ 'color': 'black', 'margin': '4px 0px 0px 4px' }}>
-                                            {state.appName}
-                                        </Typography.Title>
-                                    </Col>
-                                </Row>
-                            </Col>
+                        <Col>
+                            <Row justify='center' align='middle'>
+                                <Col>
+                                    <Image width={32} height={32} preview={false} src={state.appLogo}></Image>
+                                </Col>
+                                <Col>
+                                    <Typography.Title level={4}
+                                        style={{ 'color': 'black', 'margin': '4px 0px 0px 4px' }}>
+                                        {state.appName}
+                                    </Typography.Title>
+                                </Col>
+                            </Row>
+                        </Col>
 
 
-                            <Col>
-                                <Row justify='center'>
-                                    <Space.Compact>
-                                        <Popover content={<Typography>Open File</Typography>}>
-                                            <Upload method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
-                                                loadFolder(info)
-                                            }}>
-                                                <Button style={{ 'marginTop': '10px' }} shape='round'
-                                                    onClick={() => {
-                                                        setImportDefinition({})
-                                                        setFileToFunctions({})
-                                                        setFunctionLinks([])
-                                                    }}
-                                                    icon={
-                                                        <FileSearchOutlined style={{ 'color': 'gray' }} />
-                                                    }
-                                                >
-                                                </Button>
-                                            </Upload>
-                                        </Popover>
-                                        <Popover content={<Typography>Open Folder</Typography>}>
-                                            <Upload method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
-                                                loadFolder(info)
-                                            }}>
-                                                <Button style={{ 'marginTop': '10px' }} shape='round'
-                                                    onClick={() => {
+                        <Col>
+                            <Row justify='center'>
+                                <Space.Compact>
+                                    <Upload method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
+                                        loadFolder(info)
+                                    }}>
+                                        <Button style={{ 'marginTop': '5px' }} shape='round'
+                                            onClick={() => {
+                                                setImportDefinition({})
+                                                setFileToFunctions({})
+                                                setFunctionLinks([])
+                                            }}
+                                            icon={
+                                                <FileSearchOutlined style={{ 'color': 'gray' }} />
+                                            }
+                                        >
+                                        </Button>
+                                    </Upload>
 
-                                                        setImportDefinition({})
-                                                        setFileToFunctions({})
-                                                        setFunctionLinks([])
-                                                    }}
-                                                    icon={
-                                                        <FolderOpenOutlined style={{ 'color': 'gray' }} />
-                                                    }
-                                                >
-                                                </Button>
-                                            </Upload>
-                                        </Popover>
+                                    <Upload method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
+                                        loadFolder(info)
+                                    }}>
+                                        <Button style={{ 'marginTop': '5px' }} shape='round'
+                                            onClick={() => {
+
+                                                setImportDefinition({})
+                                                setFileToFunctions({})
+                                                setFunctionLinks([])
+                                            }}
+                                            icon={
+                                                <FolderOpenOutlined style={{ 'color': 'gray' }} />
+                                            }
+                                        >
+                                        </Button>
+                                    </Upload>
+
+                                    <Upload
+                                        accept='.json'
+                                        method='get'
+                                        directory={false}
+                                        multiple={false}
+                                        showUploadList={false}
+                                        onChange={(info) => {
+                                            dispatch({
+                                                'value': {
+                                                    'isOpeningGraph': true,
+                                                    'graphFile': info.file.originFileObj,
+                                                    'isGraphVisible': true,
+                                                }
+                                            })
+                                            //console.log('true isOpeningGraph')
+                                            //console.log(info.file.originFileObj)
+                                        }}>
+                                        <Button style={{ 'marginTop': '5px' }} shape='round'
+                                            onClick={() => {
+                                            }}
+                                            icon={
+                                                <ForkOutlined style={{ 'color': 'gray' }} />
+                                            }
+                                        >
+                                        </Button>
+                                    </Upload>
 
 
-                                    </Space.Compact>
-                                </Row>
-                            </Col>
+                                    <Button style={{ 'marginTop': '5px' }} shape='round'
+                                        onClick={() => {
+                                            dispatch({
+                                                'value': {
+                                                    'isDownloadingGraph': true,
+                                                }
+                                            })
+                                        }}
+                                        icon={
+                                            <DownloadOutlined style={{ 'color': 'gray' }} />
+                                        }
+                                        disabled={!state.isGraphVisible}
+                                    >
+                                    </Button>
+
+                                </Space.Compact>
+                            </Row>
+                        </Col>
 
                     </Row>
                 </Layout.Header>
             </Affix>
 
 
+            <Row justify='center' align='middle'
+                style={{ 'height': '80vh', 'display': state.isGraphVisible ? 'none' : 'flex' }}>
 
+                <Upload.Dragger
+                    style={{ 'marginTop': '100px' }}
+                    method='get'
+                    directory={false}
+                    multiple={true}
+                    showUploadList={false}
+                    onChange={(info) => {
+                        loadFolder(info)
+                    }}>
+                    <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}
+                        onClick={() => {
+                            setImportDefinition({})
+                            setFileToFunctions({})
+                            setFunctionLinks([])
+                        }}>
+                        <p className="ant-upload-drag-icon">
+                            <FileSearchOutlined />
+                        </p>
+                        <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                        <p className="ant-upload-hint">
+                            Easily upload your code file by clicking to select a file from your device or dragging a file and dropping into the box here.
+                        </p>
+                    </div>
+                </Upload.Dragger>
+
+                <Upload.Dragger
+                    style={{ 'marginTop': '50px' }}
+                    method='get'
+                    directory={true}
+                    multiple={true}
+                    showUploadList={false}
+                    onChange={(info) => {
+                        loadFolder(info)
+                    }}>
+                    <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}
+                        onClick={() => {
+                            setImportDefinition({})
+                            setFileToFunctions({})
+                            setFunctionLinks([])
+                        }}>
+                        <p className="ant-upload-drag-icon">
+                            <FolderOpenOutlined />
+                        </p>
+                        <p className="ant-upload-text">Click or drag folder to this area to upload</p>
+                        <p className="ant-upload-hint">
+                            Easily upload your code folder by clicking to select a folder from your device or dragging a folder and dropping into the box here.
+                        </p>
+                    </div>
+                </Upload.Dragger>
+            </Row>
 
             {
-                Object.keys(state.file_to_functions).length === 0 ?
-                    <Row justify='center' align='middle'
-                        style={{'display': state.isOpenFileOrFolderVisible ? 'flex' : 'none' }}>
+                state.isGraphVisible &&
+                <>
+                    <div style={{
+                        'backgroundColor': 'white', 'height': '14px', 'width': '64px', 'zIndex': 1,
+                        'position': 'fixed', 'bottom': '0px', 'right': '0px'
+                    }}>
 
-                        <Upload.Dragger style={{'marginTop': '100px'}} method='get' directory={false} multiple={true} showUploadList={false} onChange={(info) => {
-
-                            loadFolder(info)
-                        }}>
-                            <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}>
-                                <p className="ant-upload-drag-icon">
-                                    <FileSearchOutlined />
-                                </p>
-                                <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                                <p className="ant-upload-hint">
-                                    Easily upload your code file by clicking to select a file from your device or dragging a file and dropping into the box here.
-                                </p>
-                            </div>
-                        </Upload.Dragger>
-
-                        <Upload.Dragger style={{'marginTop': '50px'}} method='get' directory={true} multiple={true} showUploadList={false} onChange={(info) => {
-
-                            loadFolder(info)
-                        }}>
-                            <div style={{ 'width': '100%', 'height': '200px', 'maxWidth': '400px' }}>
-                                <p className="ant-upload-drag-icon">
-                                    <FolderOpenOutlined />
-                                </p>
-                                <p className="ant-upload-text">Click or drag folder to this area to upload</p>
-                                <p className="ant-upload-hint">
-                                    Easily upload your code folder by clicking to select a folder from your device or dragging a folder and dropping into the box here.
-                                </p>
-                            </div>
-                        </Upload.Dragger>
-                    </Row>
-
-                    :
-                    <>
-                        <div style={{
-                            'backgroundColor': 'white', 'height': '14px', 'width': '64px', 'zIndex': 1,
-                            'position': 'fixed', 'bottom': '0px', 'right': '0px'
-                        }}>
-
-                        </div>
-                        <MobileGraphFlow />
-                    </>
+                    </div>
+                    <MobileGraphFlow />
+                </>
             }
-
-
         </>
     );
 };
