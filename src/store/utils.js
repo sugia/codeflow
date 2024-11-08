@@ -11,6 +11,7 @@ import * as ruby from './languages/ruby'
 import * as swift from './languages/swift'
 import * as kotlin from './languages/kotlin'
 
+import * as cpp from './languages/cpp'
 
 /*
     getImportDefinition(file_name, code)
@@ -70,12 +71,15 @@ export const languageMap = {
     '.swift': swift, // todo: import local file
     '.kt': kotlin,  // todo: function match prefix, example: List matches ArrayList
     '.kts': kotlin,
+
+    '.c': cpp, // todo: import local file
+    '.cpp': cpp, // todo: import local file
 }
 
 /*
 export const languageMap = {
-     '.cpp': 'C++',
-    '.c': 'C',
+
+
 
 
     '.lua': 'Lua',
