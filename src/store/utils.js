@@ -13,6 +13,8 @@ import * as kotlin from './languages/kotlin'
 
 import * as cpp from './languages/cpp'
 
+import * as lua from './languages/lua'
+
 /*
     getImportDefinition(file_name, code)
     return {
@@ -74,6 +76,8 @@ export const languageMap = {
 
     '.c': cpp, // todo: import local file
     '.cpp': cpp, // todo: import local file
+
+    '.lua': lua, // similar to ruby in code structure and function definition
 }
 
 /*
@@ -82,7 +86,7 @@ export const languageMap = {
 
 
 
-    '.lua': 'Lua',
+
     '.dart': 'Dart',
     '.scala': 'Scala',
 

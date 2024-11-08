@@ -6,15 +6,13 @@ export const getImportDefinition = (file_name, code) => {
 
     const file_key_target = file_name.slice(0, file_name.lastIndexOf('.'))
 
-    const regex_require = /(require|require_relative)\s+['"]([\w\/]+)['"]/g
+    const regex_require = /require\s*\(?['"]([\w\/]+)['"]\)?/g
 
     // function_name: 
     while ((match = regex_require.exec(code)) !== null) {
         //console.log(match)
-        if (match[2]) {
-            const vec = match[2].split('/')
-
-            let function_name = vec[vec.length - 1]
+        if (match[1]) {
+            let function_name = match[1]
             let file_key_source = function_name
             let function_key = file_key_source + '-' + function_name
 
@@ -30,23 +28,6 @@ export const getImportDefinition = (file_name, code) => {
                     'function_name': function_name,
                 }
             )
-
-            if (vec.length > 1) {
-                file_key_source = vec[vec.length - 2]
-                function_key = file_key_source + '-' + function_name
-
-                if (!(function_key in matches)) {
-                    matches[function_key] = new Set()
-                }
-
-                matches[function_key].add(
-                    {
-                        'file_key_source': file_key_source,
-                        'file_key_target': file_key_target,
-                        'function_name': function_name,
-                    }
-                )
-            }
         }
 
     }
@@ -74,22 +55,22 @@ export const getFileToFunctions = (file_name, code) => {
     const matches = {}
     let match
 
-    const regex = /def\s+(\w+)\(?([\w,\s]*)\)?\n/g
+    const regex = /function\s+(\w*:)?(\w+)\(?([\w,\s]*)\)?\n/g
 
     while ((match = regex.exec(code)) !== null) {
-        if (match[1]) {
+        if (match[2]) {
             if (file_name in matches) {
                 matches[file_name].add(
                     {
-                        'function_name': match[1],
-                        'function_parameters': match[2] || '',
+                        'function_name': match[2],
+                        'function_parameters': match[3] || '',
                     }
                 )
             } else {
                 matches[file_name] = new Set([
                     {
-                        'function_name': match[1],
-                        'function_parameters': match[2] || '',
+                        'function_name': match[2],
+                        'function_parameters': match[3] || '',
                     }
                 ])
             }
@@ -116,7 +97,7 @@ const getWholeFunction = (match, def, code) => {
 }
 
 export const getFunctionLinks = (file_name, code) => {
-    const functionRegex = /def\s+(\w+)\(?([\w,\s]*)\)?\n/g
+    const functionRegex = /function\s+(\w*:)?(\w+)\(?([\w,\s]*)\)?\n/g
 
     const functionLinks = {}
     let match
@@ -126,10 +107,11 @@ export const getFunctionLinks = (file_name, code) => {
         let functionName
         let tmp
 
-        if (match[1]) {
-            functionName = match[1]
-            tmp = getWholeFunction(match, match[1], code)
-            // console.log(functionName, tmp)
+        if (match[2]) {
+            functionName = match[2]
+            tmp = getWholeFunction(match, match[2], code)
+            console.log(functionName, tmp)
+
         }
 
 
