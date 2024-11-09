@@ -15,6 +15,10 @@ import * as cpp from './languages/cpp'
 
 import * as lua from './languages/lua'
 
+import * as dart from './languages/dart'
+
+import * as scala from './languages/scala'
+
 /*
     getImportDefinition(file_name, code)
     return {
@@ -78,6 +82,10 @@ export const languageMap = {
     '.cpp': cpp, // todo: import local file
 
     '.lua': lua, // similar to ruby in code structure and function definition
+
+    '.dart': dart, // similar to csharp + javascript
+
+    '.scala': scala, // todo: getFunctinLinks to add more conditions
 }
 
 /*
@@ -85,15 +93,65 @@ export const languageMap = {
 
 
 
-
-
-    '.dart': 'Dart',
-    '.scala': 'Scala',
-
     '.pl': 'Perl',
     '.pm': 'Perl Modules',
 
     '.erl': 'Erlang',
     '.hrl': 'Erlang Header File',
 }
+*/
+
+
+
+/*
+perl
+
+use strict;
+use warnings;
+use List::Util qw(max min);
+require JSON if \$ENV{USE_JSON};
+use v5.10;
+
+
+
+sub greet {
+    print "Hello, World!\\n";
+}
+
+sub add {
+    my (\$a, \$b) = \@_;
+    return \$a + \$b;
+}
+
+my \$multiply = sub {
+    my (\$x, \$y) = \@_;
+    return \$x * \$y;
+};
+
+sub square { \$_[0] ** 2 }
+
+*/
+
+
+/*
+-module(my_module).
+-import(lists, [map/2, foldl/3]).
+-import(io, [format/2]).
+-export([my_function/1]).
+-import(math, [sin/1, cos/1]).
+
+
+-module(example).
+-export([hello/0, add/2, factorial/1]).
+
+hello() -> "Hello, World!".
+
+add(A, B) -> A + B.
+
+factorial(0) -> 1;
+factorial(N) -> N * factorial(N - 1).
+
+square(X) -> X * X.
+
+Fun = fun(X) -> X * X end.
 */
