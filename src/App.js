@@ -11,6 +11,7 @@ import MobileGraph from './MobileGraph'
 
 import {
   useReducer,
+  useEffect,
 } from 'react'
 
 import {
@@ -39,42 +40,74 @@ function RouteElementsMobile() {
 }
 
 function DesktopApp() {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const value = {state, dispatch}
-  
+
   return (
-    <Context.Provider value={value}>
-      <BrowserRouter>
-        <RouteElementsDesktop />
-      </BrowserRouter>
-    </Context.Provider>
+    <BrowserRouter>
+      <RouteElementsDesktop />
+    </BrowserRouter>
   )
 }
 
 function MobileApp() {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  const value = {state, dispatch}
+
 
   return (
-    <Context.Provider value={value}>
-      <BrowserRouter>
-        <RouteElementsMobile />
-      </BrowserRouter>
-    </Context.Provider>
+    <BrowserRouter>
+      <RouteElementsMobile />
+    </BrowserRouter>
   )
 }
 
 function App() {
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const value = { state, dispatch }
+
   function isDesktop() {
     return 850 < window.innerWidth
   }
 
+
+  const getEndorsementList = () => {
+
+    const jsonData = {}
+    fetch('https://api.jomimi.com/get_endorsement_list', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData),
+    })
+      .then(res => res.json())
+      .then(data => {
+        //console.log(data)
+        if (data.status.toString()[0] === '2') {
+          dispatch({
+            value: {
+              'endorsementList': data.value,
+            }
+          })
+
+          //console.log(data)
+        } else {
+          console.log(data)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  useEffect(() => {
+    getEndorsementList()
+  }, [])
+
+
   return (
-    <>
-    {
-      isDesktop() ? <DesktopApp /> : <MobileApp />
-    }
-    </>
+    <Context.Provider value={value}>
+      {
+        isDesktop() ? <DesktopApp /> : <MobileApp />
+      }
+    </Context.Provider>
   )
 }
 
